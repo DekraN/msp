@@ -1,0 +1,1645 @@
+// dutils.h
+// 10/09/2014 Marco Chiarelli aka DekraN
+/*
+WARNING!!! This program is intended to be included
+exclusively by main.c, geometry.c, programs.c, algebra.c and settings.c project files of my suite program!
+I do not assume any responsibilities about the use with any other code-scripts.
+*/
+
+// HEADER Guard
+#pragma once
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdarg.h>
+#include <math.h>
+#include <complex.h>
+#include <time.h>
+#include <string.h>
+#include <ctype.h>
+#include <limits.h>
+#include <float.h>
+#include <errno.h>
+#include <setjmp.h>
+
+#include <sys/time.h>
+
+#include <signal.h>
+
+#include <omp.h>
+
+#define false 0
+#define true 1
+
+
+// PROJECT HEADERS
+// #include "ext_math.h"
+#include "defaults.h"
+#include "ExprEval/exprincl.h"
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+
+#define __MSSHELL_WRAPPER_
+#define __MSNATIVE_
+#define __MSUTIL_
+
+
+#define __WINCALL32
+#define __WINCALL __WINCALL32
+
+#define __export // introduced with the passing to Orwell Dev-C++ IDE
+#define __apnt
+#define __lmp_prog
+#define __system
+#define _MS__private
+
+#define PROG__NAME "msp"
+#define PROG__VERSION "1.00"
+#define PROG__AUTHOR "Marco Chiarelli"
+#define PROG__LASTUPDATEDATE "17/09/2014"
+
+
+// INITIALIZING EXPREVAL DEFAULT CONSTANTS
+#define INIT_OBJLIST NULL
+#define INIT_FUNCLIST NULL
+#define INIT_CONSTLIST NULL
+#define INIT_VARLIST NULL
+#define INIT_ANS NULL
+
+#define VSPACE
+
+#define EXPREVAL_ERROR -2
+#define HEAPALLOC_ERROR -1
+#define NOERROR_EXIT 0
+
+#define MAX_CASEINSENSITIVE_CHARS_ALPHABET 26
+
+
+/// MINMAX powerful macros
+/// designed to enhance
+/// statistic media functions,
+/// especially the mediana one.
+
+#define MIN_MODE false
+#define MAX_MODE true
+
+#define MIN(a,b) MINMAX(a,b,MIN_MODE,NULL)
+#define MAX(a,b) MINMAX(a,b,MAX_MODE,NULL)
+
+#ifdef WINOS
+	#include <windows.h>
+	#include <errors.h>
+	#include <conio.h>
+    #define MAX_PATH_LENGTH MAX_PATH
+    #define pulisciSchermo system("cls")
+#else
+    #include <termios.h>
+    #include <unistd.h>
+    #define MAX_PATH_LENGTH 260
+    #define DEFAULT_LINUX_SPOOLFOLDER "/var/spool"
+    #define pulisciSchermo system("clear")
+#endif
+
+enum
+{
+    ERROR_FORBIDDENOPERATION = 1,
+    ERROR_NOSUCHFILEORDIR,
+    ERROR_NOSUCHPROCESS,
+    ERROR_INTERRUPTEDFUNCCALL,
+    ERROR_INPUTOUTPUT,
+    ERROR_NOSUCHDEVICEADDRESS,
+    ERROR_TOOLONGARGLIST,
+    ERROR_EXECFORMAT,
+    ERROR_BADFILEDESCRIPTOR,
+    ERROR_NOCHILDPROCESS,
+    ERROR_RESOURCETEMPORARYUNAVAILABLE,
+    ERROR_NOTENOUGHSPACE,
+    ERROR_PERMISSIONDENIED,
+    ERROR_BADADDRESS,
+    UNKNOWN_ERROR,
+    ERROR_RESOURCEDEVICE,
+    ERROR_FILEEXISTS,
+    ERROR_IMPROPERLINK,
+    ERROR_NOSUCHDEVICE,
+    ERROR_NOTADIRECTORY,
+    ERROR_ISASHIFT2,
+    ERROR_INVALIDARGUMENT,
+    ERROR_TOOMANYOPENFILESINSYSTEM,
+    ERROR_TOOMANYOPENFILES,
+    ERROR_INAPPROPRIATEIOCONTROLOPERATIONS,
+    ERROR_FILETOOLARGE = ERROR_INAPPROPRIATEIOCONTROLOPERATIONS+2,
+    ERROR_NOSPACELEFTONDEVICE,
+    ERROR_INVALIDSEEK,
+    ERROR_READONLYFILESYSTEM,
+    ERROR_TOOMANYLINKS,
+    ERROR_BROKENPIPE,
+    ERROR_DOMAIN,
+    ERROR_TOOLARGERESULT,
+    ERROR_RESORUCEDEADLOCKAVOIDED = ERROR_TOOLARGERESULT+2,
+    ERROR_TOOLONGFILENAME,
+    ERROR_NOLOCKSAVAILABLE,
+    ERROR_NOTIMPLEMENTEDFUNCTION,
+    ERROR_DIRECTORYNOTEMPTY,
+    ERROR_ILLEGALBYTESEQUENCE
+};
+
+
+#define MAX_BUFSIZ 2048
+
+
+#define BUFLEN_FACTOR 4 // 5 // in order to increase Maximum Buffer Capacity (Length)
+
+#define MIN_BUFLEN 1
+#define MAX_BUFLEN (MAX_BUFSIZ * BUFLEN_FACTOR)
+
+#define DEFAULT_BUFSIZE MAX_BUFSIZ
+
+#define MINMINMIN_STRING 10
+#define MINMIN_STRING 20
+#define MIN_STRING 100
+#define MAX_STRING 256
+#define MAXX_STRING (MAX_STRING<<1)
+#define MAXMAX_STRING (MAX_STRING<<MAX_DIMENSIONS)
+#define MMAX_STRING (5*MAX_STRING)
+#define KSTRING 1000
+
+#define SIGN_STRING MINMINMIN_STRING
+//
+#define INFO_STRING MIN_STRING
+
+#define DINFO_STRING INFO_STRING<<1
+
+#define MAX_DESCRIPTION_STRING 3000
+
+#define PATHCONTAINS_STRING (MAX_PATH_LENGTH+(MIN_STRING<<1))
+#define ERR_STRING PATHCONTAINS_STRING
+
+#define MAX_FILE_LINES MAXX_STRING /// 255 /// INFO_STRING /// 100
+
+#define MAX_IDENTIFIER_LENGTH MIN_STRING
+
+#define MAX_EXTENSION_LENGTH SIGN_STRING
+
+#define NULL_CHAR ""
+#define BLANK_STRING " "
+#define BLANK_CHAR ' '
+
+#define UNKNOWN_STRING "(unknown)"
+
+#define UNDERSCORE_SEPERATOR_STRING "_"
+
+#define FILENAMES_SEPERATOR UNDERSCORE_SEPERATOR_STRING
+
+
+#define EXIT_MESSAGE DEFAULT_EXIT_MESSAGE
+
+
+// #define RAD_RATIO (M_PI/180)
+// #define RAD_RATIO_FACTOR 0.333333333
+
+#define INT64_TMAX ULLONG_MAX
+#define NULL_VAL MAX_VAL // INT64_TMAX // starting_random_seed
+
+#define isNullVal(x) (x == NULL_VAL)
+
+#define MATRIXBACK_COMMAND "back"
+
+#define TERMINATING_CHAR ';'
+#define TERMINATING_STRING ";"
+
+#define SCANFEXIT_CHAR '.'
+#define SCANFEXIT_STRING "."
+
+#define EXTENSION_DOT "."
+
+#define MATRIXES_SEPERATOR_STRING BLANK_STRING
+#define MATRIXES_SEPERATOR_CHAR BLANK_CHAR
+
+// Simplex METHOD MACROS
+
+enum
+{
+    SIMPLEXMETHOD_FOUNDBFS = 0,
+    SIMPLEXMETHOD_ALLOC_ERROR,
+    SIMPLEXMETHOD_INFBFS_ERROR,
+    SIMPLEXMETHOD_FARBFS_ERROR
+};
+
+#define MIN_PROBLEM false
+#define MAX_PROBLEM true
+//
+
+enum 
+{
+	EIGVALUES_FOUNDEVS = 0,
+	EIGVALUES_ALLOC_ERROR,
+	EIGVALUES_INFEVS_ERROR
+};
+
+#define EIGENVALUES_PREC 0.00000000001
+
+#define MIDDLE_ELEMENT false
+#define INITIAL_ELEMENT true
+
+#define BY_START false
+#define BY_GLOBALVAL true
+
+#define ROMAN_NUMBER_STRING MIN_STRING<<1
+
+#define ROMAN_NUMBER_MAPSTRING 5
+
+#define MIN_PROCESSABLE_ROMAN_NUMBER 1
+#define MAX_PROCESSABLE_ROMAN_NUMBER 3000
+
+#define MIN_PASCALTRIANGLE_ROWS 1
+#define MAX_PASCALTRIANGLE_ROWS 50
+
+#define SIGN(a,b) ((b) >= 0.0 ? fabs(a) : -fabs(a))
+
+
+// DEFAULT-CUSTOM TYPES TYPEDEFS
+
+
+typedef long long int64_t;
+typedef unsigned long long uint64_t;
+
+//
+
+typedef unsigned char sel_typ; // DEFINING SELECTION TYPE
+typedef unsigned short fsel_typ; // DEFINING FORMATTABLE SELECTION TYPE
+typedef sel_typ bool;
+
+
+#define COMPARE_STRING_FACTOR MAX_STRING
+
+//
+#if (MAX_RIGHE > 0 && MAX_COLONNE > 0)
+#if (MAX_RIGHE < COMPARE_STRING_FACTOR && MAX_COLONNE < COMPARE_STRING_FACTOR)
+typedef fsel_typ dim_typ;
+#else
+typedef unsigned dim_typ;
+#endif
+#else
+    #error Invalid definition of MAX_RIGHE or MAX_COLONNE.
+#endif
+//
+
+typedef tipo_predefinito ityp;
+
+// #include "ExprEval/expreval.h"
+
+#define EXPREVAL_TMPL "./ExprEval/exprtmpl.html" /// "http://expreval.sourceforge.net/exprtmpl.html"
+
+// INCLUDING EXPREVAL STUFFS BY DIRECTLY
+/* Define type of data to use */
+// typedef double EXPRTYPE;
+typedef ityp EXPRTYPE;
+
+/* Defines for various things */
+
+/* Max id size */
+#define EXPR_MAXIDENTSIZE 255
+
+/* Error values */
+enum
+    {
+    EXPR_ERROR_UNKNOWN = -1, /* Unknown error */
+    EXPR_ERROR_NOERROR = 0, /* No Error */
+    EXPR_ERROR_MEMORY, /* Memory allocation failed */
+    EXPR_ERROR_NULLPOINTER, /* Null pointer passed to function */
+    EXPR_ERROR_NOTFOUND, /* Item not found in a list */
+    EXPR_ERROR_UNMATCHEDCOMMENT, /* Unmatched comment tags */
+    EXPR_ERROR_INVALIDCHAR, /* Invalid characters in expression */
+    EXPR_ERROR_ALREADYEXISTS, /* An item already called create */
+    EXPR_ERROR_ALREADYPARSEDBAD, /* Expression parsed already, but unsuccessfully. call free or clear */
+    EXPR_ERROR_ALREADYPARSEDGOOD, /* Expression parsed already, successfully, call free or clear */
+    EXPR_ERROR_EMPTYEXPR, /* Empty expression string passed to parse */
+    EXPR_ERROR_UNMATCHEDPAREN, /* Unmatched parenthesis */
+    EXPR_ERROR_SYNTAX, /* Syntax error in expression */
+    EXPR_ERROR_MISSINGSEMICOLON, /* Missing semicolon at end of expression */
+    EXPR_ERROR_BADIDENTIFIER, /* Identifier was to big or not formed right */
+    EXPR_ERROR_NOSUCHFUNCTION, /* Function does not exist in function list */
+    EXPR_ERROR_BADNUMBERARGUMENTS, /* Bad number of arguments in a function call */
+    EXPR_ERROR_BADEXPR, /* This is a bad expression to evaluate. It has not been parsed or has unsuccessfully */
+    EXPR_ERROR_UNABLETOASSIGN, /* Unable to do an assignment, maybe no variable list */
+    EXPR_ERROR_DIVBYZERO, /* Attempted a division by zero */
+    EXPR_ERROR_NOVARLIST, /* No variable list found but one is needed */
+    EXPR_ERROR_BREAK, /* Expression was broken by break function */
+    EXPR_ERROR_CONSTANTASSIGN, /* Assignment to a constant */
+    EXPR_ERROR_REFCONSTANT, /* Constant used as a reference parameter */
+    EXPR_ERROR_OUTOFRANGE, /* A bad value was passed to a function */
+
+    EXPR_ERROR_USER /* Custom errors should be larger than this */
+    };
+
+/* Macros */
+
+/* Forward declarations */
+typedef struct _exprNode exprNode;
+typedef struct _exprFuncList exprFuncList;
+typedef struct _exprValList exprValList;
+typedef struct _exprObj exprObj;
+
+/* Function types */
+typedef int (*exprFuncType)(exprObj *obj, exprNode *nodes, int nodecount, EXPRTYPE **refs, int refcount, EXPRTYPE *val);
+typedef int (*exprBreakFuncType)(exprObj *obj);
+
+
+
+/* Functions */
+
+/* Version information function */
+void exprGetVersion(int *major, int *minor);
+
+/* Functions for function lists */
+int exprFuncListCreate(exprFuncList **flist);
+int exprFuncListAdd(exprFuncList *flist, char *name, exprFuncType ptr, int min, int max, int refmin, int refmax);
+int exprFuncListFree(exprFuncList *flist);
+int exprFuncListClear(exprFuncList *flist);
+int exprFuncListInit(exprFuncList *flist);
+
+/* Functions for value lists */
+int exprValListCreate(exprValList **vlist);
+int exprValListAdd(exprValList *vlist, char *name, EXPRTYPE val);
+int exprValListSet(exprValList *vlist, char *name, EXPRTYPE val);
+int exprValListGet(exprValList *vlist, char *name, EXPRTYPE *val);
+int exprValListAddAddress(exprValList *vlist, char *name, EXPRTYPE *addr);
+int exprValListGetAddress(exprValList *vlist, char *name, EXPRTYPE **addr);
+void *exprValListGetNext(exprValList *vlist, char **name, EXPRTYPE *value, EXPRTYPE** addr, void *cookie);
+int exprValListFree(exprValList *vlist);
+int exprValListClear(exprValList *vlist);
+int exprValListInit(exprValList *vlist);
+
+/* Functions for expression objects */
+int exprCreate(exprObj **obj, exprFuncList *flist, exprValList *vlist, exprValList *clist,
+    exprBreakFuncType breaker, void *userdata);
+int exprFree(exprObj *obj);
+int exprClear(exprObj *obj);
+int exprParse(exprObj *obj, char *expr);
+int exprEval(exprObj *obj, EXPRTYPE *val);
+int exprEvalNode(exprObj *obj, exprNode *nodes, int curnode, EXPRTYPE *val);
+exprFuncList *exprGetFuncList(exprObj *obj);
+exprValList *exprGetVarList(exprObj *obj);
+exprValList *exprGetConstList(exprObj *obj);
+exprBreakFuncType exprGetBreakFunc(exprObj *obj);
+int exprGetBreakResult(exprObj *obj);
+void* exprGetUserData(exprObj *obj);
+void exprSetUserData(exprObj *obj, void *userdata);
+void exprSetBreakCount(exprObj *obj, int count);
+void exprGetErrorPosition(exprObj *obj, int *start, int *end);
+
+/* Other useful routines */
+int exprValidIdent(char *name);
+//
+
+// Removed because It caused overhead in Stirling's function
+// (There is another sqrt function which is assumed to be multiplied in the Formula
+// #define STIRLING_CONSTANT sqrt(2*M_PI)
+
+#define INIT_LOGMODE false
+#define MSPLOG_PATH "./msplog.LOG"
+
+#define INIT_MSS false
+#define INIT_SIGRESULT false
+
+#define MAX_MEMOIZABLE_INDEX 100
+
+#define INPUT false
+#define OUTPUT true
+
+#define OVERFLOW_ERROR "\nINFO: An OVERFLOW ERROR might have occurred during (%hu,%hu) Elaborating Matrix Element...\n"
+
+#define CALLOC_MODE false
+#define MALLOC_MODE true
+
+enum
+{
+	FIRST_MATRIX = 0,
+	SECOND_MATRIX,
+	THIRD_MATRIX
+};
+
+#define MATRIX_PRODUCT THIRD_MATRIX
+
+#define LAST_MATRIX_ENUM THIRD_MATRIX
+#define MAX_MATRICES LAST_MATRIX_ENUM+1
+
+/// #define BLOCK_SIZE 41
+
+#define MIN_BLOCKSIZE 1
+#define _BLOCK_SIZE BLOCK_SIZE
+
+#define STARTING_MINOSMMDIM MIN_OSMM_DIM + MAX_DIMENSIONS
+#define STARTING_MINSTRASSENDIM MIN_STRASSEN_DIM
+
+#define NORMAL_MODE false
+#define NOP_MODE true
+
+#ifndef WINOS
+    #define min(a,b) (((a)<(b))?(a):(b))
+#endif
+
+//
+#define insertMatrix(x,y,z,k) enterMatrix(&x,&y,&z,k,true)
+#define matrixFree(x) _matrixFree(x,NORMAL_MODE)
+
+/// #define matrixAlloc(x,y) _matrixAlloc(x,(dim_typ2)y,MALLOC_MODE)
+//															 \
+
+#define PRINTSPACE() printf2(" ");
+#define PRINTT() printf2("\t");
+#define PRINTL() printf2("\n________________________________________________________________________________\n\n") // enhanced formatting
+
+#define PRINTN() printf2("\n");
+#define PRINT2N() printf2("\n\n");
+#define PRINT5N() printf2("\n\n\n\n\n");
+#define PRINT10N() printf2("\n\n\n\n\n\n\n\n\n\n");
+
+#define SHOWPAUSEMESSAGE() PRINTL(), printf2("Press CTRL + C to stop Program Action.\n\n");
+#define PRINTHOWTOBACKMESSAGE() printf2("Press ENTER to exit SubProgram.\n\n");
+
+
+#define __pmode__ access(mode) // MACRO PROGRAM MODE
+
+#define DISABLED false
+#define ENABLED true
+
+#define BY_NUMBERS false
+#define BY_CHARS true
+
+#define EXIT_CMD "exit"
+#define _MSS_CMD DEFAULT_SCRIPTFILES_EXTENSION"_init"
+#define MSS_CMD DEFAULT_SCRIPTFILES_EXTENSION"_exit"
+
+#define INITIALIZING_RANDOM_SEED 0 // Invalid value for Random Seed.
+// Used just to initializate the program random seed value.
+
+#define RANDOM_SEED (unsigned)time(NULL)
+tipo_random_seed starting_random_seed;
+
+#define MIN_RANDOMSEED 1
+#define MAX_RANDOMSEED RAND_MAX
+
+#define MIN_STABFACT 1
+
+enum
+{
+    ALGEBRA_REALNUMBERS,
+    ALGEBRA_COMPLEXNUMBERS,
+    ALGEBRA_QUATERNIONS,
+    ALGEBRA_OCTONIONS,
+    ALGEBRA_SEDENIONS
+};
+
+#define LAST_ALGEBRA ALGEBRA_SEDENIONS
+
+#define MIN_ALGEBRA ALGEBRA_REALNUMBERS
+#define MAX_ALGEBRA LAST_ALGEBRA
+
+#define _MAX_ALGEBRA MAX_ALGEBRA+1
+
+#define REAL_UNIT_NAME NULL_CHAR // "real"
+
+#define _cabs(a) ___cabs(a, ALGEBRA_COMPLEXNUMBERS)
+#define _qabs(a) ___cabs(a, ALGEBRA_QUATERNIONS)
+#define _oabs(a) ___cabs(a, ALGEBRA_OCTONIONS)
+#define _sabs(a) ___cabs(a, ALGEBRA_SEDENIONS)
+
+#define MIN_MEMOIZABLE_INDEX 5
+
+// DEFINIZIONE MACRO SOTTO-PROGRAMMI
+//
+
+// Valore di inizializzazione del metadato modalità
+// della variabile strutturata suite, definita più sotto
+#define PROGRAM_BUSY -1
+// o più semplicemente indica che l'utente è in fase di scelta del subprogram.
+
+
+// Enumerazione ID Sotto-Programmi
+// per ogni Famiglia
+//
+
+// MAIN PROGRAMS ENUMERATIONS
+enum
+{
+    MAIN_BCALCULATOR = 0,
+    MAIN_ADVANCEDCALCULATOR,
+    MAIN_ALGEBRAOPERATIONS,
+    #ifdef ALLOW_MSSMANAGER
+        MAIN_MSSMANAGER,
+    #endif // ALLOW_MSSMANAGER
+    MAIN_CHANGEALGEBRA,
+    MAIN_SWITCHLOGMODE,
+    MAIN_PROGINFO
+};
+
+// MACRO PROGRAMMI
+// Immettere la macro dell'ultimo programma definito
+#define LAST_PROGRAM MAIN_PROGINFO // Cambiare ogni qualvola si aggiunge
+// un sottoprogramma alla relativa enumerazione
+
+//
+#define MAX_PROGRAMMI LAST_PROGRAM+1
+
+// ADVANCED CALCULATOR MACRO AND ENUMERATIONS
+//
+
+enum
+{
+    MSSMANAGER_COMMANDLINE = 0,
+    MSSMANAGER_EXECSCRIPTFILES,
+    MSSMANAGER_SHOWUSAGES,
+};
+
+#define MAX_ARGS 5
+#define LAST_MSSMANAGER_PROG MSSMANAGER_SHOWUSAGES
+#define MAX_MSSMANAGER_PROGS LAST_MSSMANAGER_PROG+1
+
+enum
+{
+    ADVCALC_SECONDGRADEEQUATIONSOLVER = 0,
+    ADVCALC_COMPLEXNUMBERSSUM,
+    ADVCALC_COMPLEXNUMBERSPROD,
+    ADVCALC_SIMPLEXMETHOD,
+    ADVCALC_NEWTONDIFFTABLES,
+    ADVCALC_LAGRANGEINTERPOLATION,
+    ADVCALC_FUNCTIONINTEGRATION,
+    ADVCALC_STRAIGHTLINEFITTING,
+    ADVCALC_PARABOLICCURVEFITTING,
+    ADVCALC_LINEARSYSTEMSSOLVER
+};
+
+#define LAST_ADVCALC_PROG ADVCALC_LINEARSYSTEMSSOLVER
+#define MAX_ADVCALC_PROGS LAST_ADVCALC_PROG+1
+
+// LINEAR ALGEBRA MACRO AND ENUMERATIONS
+//
+enum
+{
+    ALGOPS_MATRIXSORT = 0,
+    ALGOPS_MATRIXEIGVALUES,
+    ALGOPS_NORMCALCULATOR,
+    ALGOPS_DETERMINANTCALCULATOR,
+    ALGOPS_TRACECALCULATOR,
+    ALGOPS_RANKCALCULATOR,
+    ALGOPS_MATRIXSVD,
+    ALGOPS_INVERSEMATRIX,
+    ALGOPS_MATRIXTRANSPOSE,
+    ALGOPS_MATRIXADD,
+    ALGOPS_TENSORSSUM,
+    ALGOPS_MATRIXMULTIPLICATION,
+    ALGOPS_KRONPRODUCT,
+    ALGOPS_MATRIXPOWER,
+    ALGOPS_MATRIXKPOWER,
+    ALGOPS_MATRIXPERVECTOR,
+    ALGOPS_DOTPRODUCT,
+    ALGOPS_PERSCALARMULTIPLICATION,
+    ALGOPS_SCALARDIVISIONMATRIX,
+    ALGOPS_ILLCONDITIONCHECKING,
+    ALGOPS_MATRIXLUFACTORIZATION
+};
+
+
+#define LAST_ALGEBRA_PROGRAM ALGOPS_MATRIXLUFACTORIZATION
+#define MAX_ALGEBRA_OPERATIONS LAST_ALGEBRA_PROGRAM+1
+
+#define COMPAREDOUBLE_PRECISION 0.001
+
+#define CRV_DONTDGCHECK false
+#define CRV_DODGCHECK true
+
+
+enum
+{
+    FID_SIN = 0,
+    FID_COS,
+    FID_SINH,
+    FID_COSH,
+    FID_SEC,
+    FID_SECH,
+    FID_CSC,
+    FID_CSCH,
+    FID_ASIN,
+    FID_ASINH,
+    FID_ACOS,
+    FID_ACOSH,
+    FID_ASEC,
+    FID_ASECH,
+    FID_ACSC,
+    FID_ACSCH,
+    FID_TAN,
+    FID_TANH,
+    FID_ATAN,
+    FID_ATANH,
+    FID_COT,
+    FID_COTH,
+    FID_ACOT,
+    FID_ACOTH,
+    FID_HSIN,
+    FID_HSINH,
+    FID_QSIN,
+    FID_QSINH,
+    FID_HCOS,
+    FID_HCOSH,
+    FID_QCOS,
+    FID_QCOSH,
+    FID_HSEC,
+    FID_HSECH,
+    FID_QSEC,
+    FID_QSECH,
+    FID_HCSC,
+    FID_HCSCH,
+    FID_QCSC,
+    FID_QCSCH,
+    FID_HTAN,
+    FID_HTANH,
+    FID_QTAN,
+    FID_QTANH,
+    FID_HCOT,
+    FID_HCOTH,
+    FID_QCOT,
+    FID_QCOTH,
+    FID_VSIN,
+    FID_VSINH,
+    FID_CVSIN,
+    FID_CVSINH,
+    FID_VCOS,
+    FID_VCOSH,
+    FID_CVCOS,
+    FID_CVCOSH,
+    FID_HVSIN,
+    FID_HVSINH,
+    FID_HCVSIN,
+    FID_HCVSINH,
+    FID_QVSIN,
+    FID_QVSINH,
+    FID_QCVSIN,
+    FID_QCVSINH,
+    FID_HVCOS,
+    FID_HVCOSH,
+    FID_HCVCOS,
+    FID_HCVCOSH,
+    FID_QVCOS,
+    FID_QVCOSH,
+    FID_QCVCOS,
+    FID_QCVCOSH,
+    FID_ESEC,
+    FID_ESECH,
+    FID_ECSC,
+    FID_ECSCH,
+    FID_HESEC,
+    FID_HESECH,
+    FID_HECSC,
+    FID_HECSCH,
+    FID_QESEC,
+    FID_QESECH,
+    FID_QECSC,
+    FID_QECSCH,
+    FID_SINC,
+    FID_SINCH,
+    FID_HSINC,
+    FID_HSINCH,
+    FID_QSINC,
+    FID_QSINCH,
+    FID_COSC,
+    FID_COSCH,
+    FID_HCOSC,
+    FID_HCOSCH,
+    FID_QCOSC,
+    FID_QCOSCH,
+    FID_SECC,
+    FID_SECCH,
+    FID_HSECC,
+    FID_HSECCH,
+    FID_QSECC,
+    FID_QSECCH,
+    FID_CSCC,
+    FID_CSCCH,
+    FID_HCSCC,
+    FID_HCSCCH,
+    FID_QCSCC,
+    FID_QCSCCH,
+    FID_TANC,
+    FID_TANCH,
+    FID_HTANC,
+    FID_HTANCH,
+    FID_QTANC,
+    FID_QTANCH,
+    FID_COTC,
+    FID_COTCH,
+    FID_HCOTC,
+    FID_HCOTCH,
+    FID_QCOTC,
+    FID_QCOTCH,
+    FID_LOG,
+    FID_LOG10,
+    FID_LOG2,
+    FID_LOGC,
+    FID_LOG10C,
+    FID_LOG2C,
+    FID_LOG1P,
+    FID_LOG1PC,
+    FID_EXP,
+    FID_EXPC,
+    FID_EXP10,
+    FID_EXP10C,
+    FID_EXP2,
+    FID_EXP2C,
+    FID_ASUM,
+    FID_FIBO,
+    FID_FACT,
+    FID_SFACT,
+    FID_NPNUM,
+    FID_PRIMR,
+    FID_FPNSUM,
+    FID_FIBNC,
+    FID_FSUM,
+    FID_FASUM,
+    FID_SFASUM,
+    FID_FNNSUM,
+    FID_FLOOR,
+    FID_CEIL,
+    FID_DEG,
+    FID_RAD
+};
+
+#define LAST_FID FID_RAD
+#define MAX_FIDS LAST_FID+1
+
+
+// MACRO PER FAR VEDERE O MENO LA DESCRIZIONE
+// NELLE VARIE FUNZIONI DI FORMATTAZIONE INFORMAZIONI
+// RELATIVE AL PROGRAMMA.
+#define WITH_DESCRIPTION false
+#define WITHOUT_DESCRIPTION true
+
+
+// DEFINING MAX_TYPES
+// and DOMAIN_NULL MACROS
+// in order to identify
+// the operations relative domains.
+
+// #define MAX_TYPES 15
+// #define DOMAIN_NULL MAX_TYPES+1
+
+// DEFINING binary_function
+// or unary_function operations INVERSE_OPSs
+#define unary_function false
+#define binary_function true
+
+// basicCalculator() GENERIC STUFFS...
+#define BCALC_CAMBIAMENTODIBASE_MINBASE 2
+#define BCALC_CAMBIAMENTODIBASE_MAXBASE 10
+
+#define MAX_MINBASE_CONVERTIBLE_NUM 262000
+
+// #define MAX_TYPES 14
+// #define DOMAIN_NULL MAX_TYPES+1
+
+#define LOWER_TRIANGULAR 0
+#define UPPER_TRIANGULAR 1
+
+
+enum
+{
+    SIMPSON1DIV8_RULE = 0,
+    SIMPSON3DIV8_RULE,
+    TRAPEZOIDAL_RULE
+};
+
+
+// DEFINING FAMILIES STRUCTURES MACROS
+//
+#define BY_USER false
+#define AUTOMATIC true
+
+//
+// Macro to assert whether a subprogram is Child or Father
+#define CHILD false
+#define FATHER true
+//
+
+// BASIC CHECK FOR DMA (Dynamic Memory Allocation)
+#define errMem(pntr, rval) if(checkErrMem(pntr)) return rval;
+
+#define Elements_in(arrayname) (sizeof(arrayname)/sizeof(arrayname *))
+// The macro upwriten is useless because when using dynamic mallocation,
+// size_t sizes indexing of matrix are lost.
+
+
+/*
+Dedicati alla modalità di funzionamento
+della funzione matrixToVector, per decidere
+in che senso deve essere svolta
+0 -> Normale, 1 -> Viceversa
+*/
+
+#define MATRIX_TO_VECTOR false
+#define VECTOR_TO_MATRIX true
+
+/*
+Dedicati alla modalità di stampa della matrice
+dell'omonima funzione. Come suggeriscono le
+stesse macro, passando 0 si stampa una matrice
+di valori in virgola mobile, altrimenti di interi.
+*/
+
+enum
+{
+    ROWS = 0,
+    COLUMNS,
+    COLUMNS2
+};
+/*
+Dedicati alla modalita' booleana di funzionamento
+del sottoprogramma procedurale binaryAlgSum.
+BAS_SUM indica una somma, BAS_SUB indica una differenza,
+sempre da operare ovviamente tramite operazioni strettamente
+associate al tipo int, ovvero normale Somma Algerica
+*/
+
+#define BAS_SUM true
+#define BAS_SUB false
+
+
+
+// #define DIM_BITFIELD (sizeof(dim_typ)-1)*<<3
+#define DIM_BITFIELD 8
+#define DATE_BITFIELD 5
+#define DOMAIN_BITFIELD 4
+#define BOOL_BITFIELD 1
+
+#define MIN_NEWTON_DIFFTABLES_DIM 1
+#define MAX_NEWTON_DIFFTABLES_DIM 15
+
+
+// USED TO SHOW BACKWARD && FORWARD
+// NEWTON's DIFFERENCE TABLES
+#define BACKWARD_DIFFTAB false
+#define FORWARD_DIFFTAB true
+
+enum
+{
+    EXITHANDLE_EXIT = 0,
+    EXITHANDLE_BACKCMD,
+    INVALID_EXITHANDLE
+};
+
+// #define INVALID_EXITHANDLE 3
+
+#define PARSER_NOSETTINGS 0
+
+#define PARSER_SHOWRESULT 1
+#define PARSER_SHOWVARLIST 2
+#define PARSER_SHOWDIFFTIME 4
+#define PARSER_SAVERESULT 8
+
+
+#define LEFT_OPR 0
+#define RIGHT_OPR 1
+
+#define MAX_RIGHE_PER_COLONNE (int)(floor(sqrt(MAX_RIGHE*MAX_COLONNE))) // DIMENSIONE MASSIMA MATRICI QUADRATE nXn
+
+#define MAX_DIMENSIONS 2
+#define MAX_ABSTRACT_DIMENSIONS 3
+
+#define SUMMATION_SUM false
+#define SUMMATION_SUB true
+
+#define PRODUCTORY_MUL false
+#define PRODUCTORY_DIV true
+
+
+// used for CURVEs FITTING or INTERPOLATIONS SubPrograms...
+//
+#define XROW 0
+#define YROW 1
+//
+
+#define FIRST_NUMBER XROW
+#define SECOND_NUMBER YROW
+
+#define FIRST_VECTOR XROW
+#define SECOND_VECTOR YROW
+
+#define FIRST_QUARTILE XROW
+#define THIRD_QUARTILE YROW
+
+#define FIRST_QUARTILE_CONSTANT 0.25
+#define SECOND_QUARTILE_CONSTANT 0.50
+#define THIRD_QUARTILE_CONSTANT 0.75
+
+// COMPLEX Numbers MACROS...
+//
+#define REAL_PART XROW
+#define IMAG_PART YROW
+//
+#define MAX_COMPLEX_UNITS MAX_DIMENSIONS
+
+
+// IperCOMPLEX Numbers MACROS
+//
+enum
+{
+    QUATERNIONS_REALPART = 0,
+    QUATERNIONS_IPART,
+    QUATERNIONS_JPART,
+    QUATERNIONS_KPART
+};
+
+#define LAST_QUATERNIONS_UNIT QUATERNIONS_KPART
+#define MAX_QUATERNIONS_UNITS LAST_QUATERNIONS_UNIT+1
+
+enum
+{
+    OCTONIONS_REALPART = 0,
+    OCTONIONS_E1PART,
+    OCTONIONS_E2PART,
+    OCTONIONS_E3PART,
+    OCTONIONS_E4PART,
+    OCTONIONS_E5PART,
+    OCTONIONS_E6PART,
+    OCTONIONS_E7PART
+};
+
+#define LAST_OCTONIONS_UNIT OCTONIONS_E7PART
+#define MAX_OCTONIONS_UNITS LAST_OCTONIONS_UNIT+1
+
+enum
+{
+    SEDENIONS_REALPART = 0,
+    SEDENIONS_E1PART,
+    SEDENIONS_E2PART,
+    SEDENIONS_E3PART,
+    SEDENIONS_E4PART,
+    SEDENIONS_E5PART,
+    SEDENIONS_E6PART,
+    SEDENIONS_E7PART,
+    SEDENIONS_E8PART,
+    SEDENIONS_E9PART,
+    SEDENIONS_E10PART,
+    SEDENIONS_E11PART,
+    SEDENIONS_E12PART,
+    SEDENIONS_E13PART,
+    SEDENIONS_E14PART,
+    SEDENIONS_E15PART
+};
+
+#define LAST_SEDENIONS_UNIT SEDENIONS_E15PART
+#define MAX_SEDENIONS_UNITS LAST_SEDENIONS_UNIT+1
+
+// SecondGradeEquationSolver() STUFFS...
+//
+#define ROOT_X1 0
+#define ROOT_X2 1
+
+enum
+{
+    COEFF_A = 0,
+    COEFF_B,
+    COEFF_C
+};
+//
+
+// Memoizer System STUFFS...
+enum
+{
+	FUNCTION_FIBONACCI = 0,
+	FUNCTION_FATTORIALE,
+	FUNCTION_EVEN_SFATTORIALE,
+	FUNCTION_ODD_SFATTORIALE
+};
+
+#define LAST_MEMOIZABLE_FUNCTION FUNCTION_ODD_SFATTORIALE
+#define MAX_MEMOIZABLE_FUNCTIONS LAST_MEMOIZABLE_FUNCTION+1
+
+#define _MAX_MEMOIZABLE_FUNCTIONS MAX_MEMOIZABLE_FUNCTIONS+1
+
+#define MAX_STD_BUFFERS MAX_ABSTRACT_DIMENSIONS
+#define _MAX_STD_BUFFERS MAX_STD_BUFFERS+1
+
+#define INVALIDRETURNVALUE_NPRIMENUMBER 0.00
+#define INVALIDRETURNVALUE_MEMOIZABLEFUNCTIONS -1.00
+
+#define INVALIDRETURNVALUE_FIBONACCI INVALIDRETURNVALUE_MEMOIZABLEFUNCTIONS
+#define INVALIDRETURNVALUE_FATTORIALE INVALIDRETURNVALUE_MEMOIZABLEFUNCTIONS
+#define INVALIDRETURNVALUE_SFATTORIALE INVALIDRETURNVALUE_MEMOIZABLEFUNCTIONS
+
+#define INVALIDRETURNVALUE_EVEN_SFATTORIALE INVALIDRETURNVALUE_SFATTORIALE
+#define INVALIDRETURNVALUE_ODD_SFATTORIALE INVALIDRETURNVALUE_SFATTORIALE
+
+
+// PULIZIA DEL BUFFER
+#define CLEARBUFFER() fflush(stdin) // cleanBuffer()
+
+#define TRIGONOMETRIC_DOMAIN(x) (x>=-1&&x<=1)
+
+#define random(x) ((rand()%x)+1)
+#define randomize srand(starting_random_seed=RANDOM_SEED)
+#define random2(x,y) randomize,random(y)
+#define enhanced_random(x,y) srand((unsigned)x),random(y)
+
+typedef const dim_typ dim_typ2[MAX_DIMENSIONS];
+typedef const dim_typ dim_typ3[MAX_ABSTRACT_DIMENSIONS];
+
+typedef struct
+{
+    const char name[DINFO_STRING];
+    const char cmdname[SIGN_STRING];
+    const char usage[INFO_STRING];
+    void (*program_function)(const sel_typ, char **);
+    const bool automatic: BOOL_BITFIELD;
+    const bool isFather: BOOL_BITFIELD;
+} sprog;
+
+typedef struct
+{
+    dim_typ * memoizer;
+    dim_typ current_max_index: DIM_BITFIELD;
+} memObj;
+
+typedef struct
+{
+    exprValList *var_list;
+    EXPRTYPE *e_ANS;
+    EXPRTYPE global_var;
+} exprType;
+
+enum
+{
+    ENVS = 0,
+    MATRICES,
+    LOGS,
+    LAYOUTS
+};
+
+#define LAST_PROGRAM_ITEMTYPE LAYOUTS
+#define MAX_LISTS LAST_PROGRAM_ITEMTYPE+1
+
+// ext_math.C STRUCTS DEFINITIONS
+
+/*
+DEFINING MAX_TYPES
+and DOMAIN_NULL MACROS
+in order to identify
+the operations relative domains.
+*/
+//
+enum
+{
+    DOMAIN_BOOL = 0,
+    DOMAIN_UCHAR,
+    DOMAIN_SCHAR,
+    DOMAIN_INT,
+    DOMAIN_SHRT,
+    DOMAIN_LONG,
+    DOMAIN_LLONG,
+    DOMAIN_UINT,
+    DOMAIN_USHRT,
+    DOMAIN_ULONG,
+    DOMAIN_ULLONG,
+    DOMAIN_FLT,
+    DOMAIN_DBL,
+    DOMAIN_LDBL
+};
+
+#define LAST_TYPEDOMAIN DOMAIN_LDBL
+#define MAX_TYPES LAST_TYPEDOMAIN+1
+#define DOMAIN_NULL MAX_TYPES
+//
+
+typedef struct
+{
+    const long double min;
+    const long double max;
+} TypeRange;
+
+
+struct ext_math_type
+{
+    const TypeRange types_range[MAX_TYPES];
+    const char funcnames[MAX_FIDS][MIN_STRING];
+    ityp (* const functions[MAX_FIDS])(ityp);
+    const char romn_thousand_map[MAX_ABSTRACT_DIMENSIONS][ROMAN_NUMBER_MAPSTRING];
+    const char romn_map[MAX_ABSTRACT_DIMENSIONS][9][ROMAN_NUMBER_MAPSTRING];
+};
+//
+
+struct prog_constants
+{
+	const char memoizers_names[_MAX_MEMOIZABLE_FUNCTIONS][INFO_STRING];
+    const char algebra_elements_names[_MAX_ALGEBRA][INFO_STRING];
+    const char algebra_imaginary_units_names[_MAX_ALGEBRA][MAX_SEDENIONS_UNITS][SIGN_STRING];
+};
+
+struct program
+{
+    memObj sysMem[MAX_MEMOIZABLE_FUNCTIONS];
+    exprType *exprVars;
+    exprFuncList *func_list;
+    exprValList *const_list;
+    dim_typ algebra;
+    fsel_typ random_seed;
+    sel_typ mode;
+    FILE * log_pntr;
+    volatile sel_typ exitHandle;
+    volatile bool sigresult: BOOL_BITFIELD;
+    volatile bool log_mode: BOOL_BITFIELD;
+   	volatile bool mss: BOOL_BITFIELD; 
+};
+
+#define access(x) suite->x
+extern struct program * suite;
+
+
+#define INVERSE_OPS isSett(BOOLS_INVERSEOPERATIONS)
+
+#ifdef WINOS
+	_CRTIMP extern int errno;
+#else
+	extern int errno;
+#endif
+
+/// extern struct program suite;
+
+extern sprog main_menu[MAX_PROGRAMMI],
+                    adv_calc[MAX_ADVCALC_PROGS],
+                    alg_operations[MAX_ALGEBRA_OPERATIONS];
+
+#ifdef ALLOW_MSSMANAGER
+    extern sprog mss_manager[MAX_MSSMANAGER_PROGS];
+#endif // ALLOW_MSSMANAGER
+
+extern const struct ext_math_type ext_math;
+extern const struct prog_constants suite_c;
+
+
+/// FUNCTIONS DECLARATIONS
+/// geometry.c
+__MSUTIL_ void toupper_s(char *);
+__MSUTIL_ void tolower_s(char *);
+__MSUTIL_ int __export countbits(long);
+__MSUTIL_ int __export ucountbits(unsigned long);
+__MSUTIL_ char __export *strrev(char *);
+__MSUTIL_ char __export *replace(char const * const, char const * const, char const * const);
+__MSUTIL_ bool __export __system file_exists(const char *);
+__MSNATIVE_ bool __system readFile(const char [static MAX_PATH_LENGTH]);
+__MSNATIVE_ bool __system printFile(const char [static MAX_PATH_LENGTH]);
+__MSNATIVE_ bool __system writeFile(const char [static MAX_PATH_LENGTH]);
+__MSNATIVE_ FILE * __system checkForFHErrors(const char [static MAX_PATH_LENGTH], char [static 1]);
+__MSNATIVE_ bool __system frename(const char [static MAX_PATH_LENGTH], const char [static MAX_PATH_LENGTH]);
+__MSUTIL_ bool matrixUTConv(ityp *restrict, dim_typ);
+__MSNATIVE_ const ityp sarrus(ityp *restrict);
+__MSNATIVE_ ityp carlucci(ityp *restrict);
+__MSNATIVE_ ityp checkStdMat(ityp *restrict, dim_typ);
+__MSNATIVE_ __MSUTIL_ ityp det(ityp *restrict, dim_typ, bool *);
+__MSNATIVE_ ityp _matrixTrace(ityp *restrict, dim_typ);
+__MSSHELL_WRAPPER_ __MSNATIVE_ bool randomMatrix(ityp *restrict, const register dim_typ [static MAX_DIMENSIONS]);
+__MSNATIVE_ void transpose(ityp *restrict, ityp *restrict, const register dim_typ [static MAX_DIMENSIONS]);
+__MSUTIL_ bool __export FattLU(dim_typ, ityp *restrict, ityp *restrict, ityp *);
+__MSUTIL_ bool __export invertMatrix(ityp *restrict, dim_typ);
+__MSUTIL_ bool __export dsvd(ityp *restrict, const register dim_typ [static MAX_DIMENSIONS], ityp *restrict, ityp *restrict);
+__MSNATIVE_ dim_typ __export rank(ityp *restrict, const register dim_typ [static MAX_DIMENSIONS]);
+__MSNATIVE_ void __system printf2(const char *, ...);
+__MSNATIVE_ void __system printErr(const int, const char *, ...);
+__MSNATIVE_ bool __system __export parse(char [], ityp *);
+__MSNATIVE_ _MS__private void __system printMatrix(FILE *, ityp *, const register dim_typ [static MAX_DIMENSIONS]);
+__MSNATIVE_ bool __system __export matrixToken(const char [], ityp **, dim_typ *, dim_typ *);
+__MSSHELL_WRAPPER_ __MSNATIVE_ const sprog * const __system searchProgram(const char [static SIGN_STRING]);
+__MSUTIL_ int __export cmpfunc(const void *, const void *);
+__MSUTIL_ bool __export min_cmpfunc(const register ityp, const register ityp);
+__MSUTIL_ bool __export max_cmpfunc(const register ityp, const register ityp);
+__MSNATIVE_ void __system _showUsage(const sprog * const);
+__MSNATIVE_ void __system printUsage(const sprog * const);
+__MSNATIVE_ void __system prepareToExit(void);
+__MSNATIVE_ void __system safeExit(const int);
+__MSNATIVE_ void __system _handleCmdLine(const register sel_typ, char **);
+__MSNATIVE_ bool __system _execScriptFiles(const char [static MAX_PATH_LENGTH]);
+
+#ifdef WINOS
+	__MSUTIL_ __WINCALL BOOL WINAPI __system __export SetExitButtonState(const bool);
+    __MSUTIL_ __WINCALL HWND WINAPI __system __export GetConsoleWindowNT();
+#else
+	__MSUTIL_ __MSNATIVE_ __system __export int getch( );
+#endif
+
+__MSUTIL_ const char * const __system __export getFilename(const char path[static MAX_PATH_LENGTH]);
+__MSUTIL_ void __system updInfo(void);
+__MSNATIVE_ ityp __export MINMAX(const register dim_typ dim, const ityp [static dim], const bool, dim_typ *);
+__MSNATIVE_ __MSUTIL_ ityp __system __export getDiffTime(struct timeval * tvBegin);
+__MSNATIVE_ bool __system __export isDomainForbidden(ityp, bool);
+__MSUTIL_ void _MS__private __system __export free_foreach(ityp **, const dim_typ, bool mode);
+__MSUTIL_ void _MS__private __system __export free_foreach2(ityp **, const dim_typ);
+__MSUTIL_ bool __system __export checkErrMem(const void *);
+__MSNATIVE_ bool __system __export matrixAlloc(ityp **, const register dim_typ [static MAX_DIMENSIONS]);
+__MSNATIVE_ void __system __export _matrixFree(ityp **, bool mode);
+__MSNATIVE_ bool __system __export equalMatrix(ityp **, ityp *, const register dim_typ [static MAX_DIMENSIONS]);
+__MSNATIVE_ void __system __export _flushMemoizersBuffers(sel_typ);
+__MSNATIVE_ void __system __export flushAllMemoizersBuffers(void);
+__MSNATIVE_ dim_typ __system __export selectListItem(dim_typ dim, bool, const char *, const char [static dim][MIN_STRING]);
+__MSNATIVE_ void __system sigexit(void);
+__MSNATIVE_ bool __system __export catchPause();
+__MSNATIVE_ void __system getVarList(void);
+__MSNATIVE_ ityp __system __export requires(const char *, const char *, const char *, const unsigned);
+__MSNATIVE_ bool __system insertDims(dim_typ *, dim_typ *);
+__MSNATIVE_ bool __system insertDim(dim_typ *, bool);
+__MSSHELL_WRAPPER_ __MSNATIVE_ void showNewtonDifferenceTable(dim_typ n, ityp [static n], ityp [MAX_NEWTON_DIFFTABLES_DIM][MAX_NEWTON_DIFFTABLES_DIM], bool);
+__MSNATIVE_ bool __system insertNMMatrix(ityp **, const register dim_typ [static MAX_DIMENSIONS]);
+__MSNATIVE_ volatile char __system insertElement(ityp *restrict, const register dim_typ [static MAX_DIMENSIONS], const register dim_typ, bool);
+__MSNATIVE_ volatile bool __system checkBackTracking(volatile char, dim_typ *);
+__MSNATIVE_ volatile __system sel_typ checkBackTracking2(volatile char, dim_typ *, dim_typ *, dim_typ *, dim_typ);
+__MSNATIVE_ bool __system __export enterMatrix(ityp **, dim_typ *, dim_typ *, bool, bool);
+
+
+/// programs.c
+__MSSHELL_WRAPPER_ void __apnt changeProgramSettings(const sel_typ argc, char ** argv);
+__MSSHELL_WRAPPER_ void basicCalculator(const sel_typ argc, char ** argv);
+__MSSHELL_WRAPPER_ void __apnt calcolatoreAvanzato(const sel_typ argc, char ** argv);
+__MSSHELL_WRAPPER_ void __apnt algebraOperations(const sel_typ argc, char ** argv);
+__MSSHELL_WRAPPER_ void __apnt mssManager(const sel_typ argc, char ** argv);
+__MSSHELL_WRAPPER_ __MSNATIVE_ void _MS__private __system __export operationsGroupMenu(dim_typ dim, sprog [static dim], const char [static INFO_STRING], bool);
+
+/// ext_math.c
+
+__MSNATIVE_ char * const __system __export binaryAlgSum(ityp, ityp, bool);
+__MSNATIVE_ char * const __system __export binNumComp(ityp);
+__MSNATIVE_ ityp __system __export math_mul(register ityp, register ityp);
+__MSNATIVE_ ityp __system __export math_div(register ityp, register ityp);
+__MSNATIVE_ ityp __export ___cabs(ityp *restrict, const register sel_typ);
+__MSNATIVE_ void __export _complexAdd(ityp *restrict, ityp [static MAX_DIMENSIONS]);
+__MSNATIVE_ void __export _complexSub(ityp *restrict, ityp [static MAX_DIMENSIONS]);
+__MSNATIVE_ void __export _complexMul(ityp *restrict, ityp [static MAX_DIMENSIONS]);
+__MSNATIVE_ void __export _complexDiv(ityp *restrict, ityp [static MAX_DIMENSIONS]);
+__MSNATIVE_ void __export _quaternionsAdd(ityp *restrict, ityp [static MAX_QUATERNIONS_UNITS]);
+__MSNATIVE_ void __export _quaternionsSub(ityp *restrict, ityp [static MAX_QUATERNIONS_UNITS]);
+__MSNATIVE_ void __export _quaternionsMul(ityp *restrict, ityp [static MAX_QUATERNIONS_UNITS]);
+__MSNATIVE_ void __export _quaternionsDiv(ityp *restrict, ityp [static MAX_QUATERNIONS_UNITS]);
+__MSNATIVE_ void __export _octonionsAdd(ityp *restrict, ityp [static MAX_OCTONIONS_UNITS]);
+__MSNATIVE_ void __export _octonionsSub(ityp *restrict, ityp [static MAX_OCTONIONS_UNITS]);
+__MSNATIVE_ void __export _octonionsMul(ityp *restrict, ityp [static MAX_OCTONIONS_UNITS]);
+__MSNATIVE_ void __export _octonionsDiv(ityp *restrict, ityp [static MAX_OCTONIONS_UNITS]);
+__MSNATIVE_ void __export _sedenionsAdd(ityp *restrict, ityp [static MAX_SEDENIONS_UNITS]);
+__MSNATIVE_ void __export _sedenionsSub(ityp *restrict, ityp [static MAX_SEDENIONS_UNITS]);
+__MSNATIVE_ void __export _sedenionsMul(ityp *restrict, ityp [static MAX_SEDENIONS_UNITS]);
+__MSNATIVE_ void __export _sedenionsDiv(ityp *restrict, ityp [static MAX_SEDENIONS_UNITS]);
+__MSNATIVE_ bool __export _secondGradeEquationSolver(ityp *restrict, ityp [static MAX_DIMENSIONS]);
+__MSUTIL_ void __export getRomanNumber(dim_typ, char [static ROMAN_NUMBER_STRING]);
+__MSUTIL_ int64_t _MS__private __export powi(register int64_t, register int64_t);
+__MSUTIL_ ityp __export mpow(ityp, int64_t);
+__MSUTIL_ ityp __export mpow2(ityp, int64_t);
+__MSNATIVE_ __MSUTIL_ void __export getPascalTriangle(uint64_t);
+__MSUTIL_ bool __system __export isPrimeHISP(register uint64_t);
+__MSUTIL_ bool __system __export isPrimeLIFP(register uint64_t);
+__MSNATIVE_ void __system __export prime_N_Number(register uint64_t, register uint64_t);
+__MSNATIVE_ ityp __system __export N_prime_Number(register ityp);
+__MSNATIVE_ ityp __export fibnc(register ityp);
+__MSNATIVE_ ityp __export primr(register ityp);
+__MSNATIVE_ ityp __export fpnsum(register ityp);
+__MSNATIVE_ bool __system __export trigonometric_domain(register ityp, register ityp, register ityp);
+__MSNATIVE_ ityp __export stirling(register ityp);
+__MSNATIVE_ ityp __export fibo(register ityp);
+__MSNATIVE_ ityp __export fact(register ityp);
+__MSUTIL_ ityp __export sfact(register ityp);
+__MSNATIVE_ ityp __export sfact_even(register ityp);
+__MSNATIVE_ ityp __export sfact_odd(register ityp);
+__MSUTIL_ ityp __export perm(register ityp);
+__MSUTIL_ ityp __export perm_rep(register ityp, register uint64_t dim, ityp [static dim]);
+__MSUTIL_ ityp __export kperm(register ityp, register ityp);
+__MSUTIL_ ityp __export kperm_rep(register ityp, register ityp);
+__MSUTIL_ ityp __export comb(register ityp, register ityp);
+__MSUTIL_ ityp __export comb_rep(register ityp, register ityp);
+__MSNATIVE_ ityp __export gsum(register ityp, register int64_t);
+__MSNATIVE_ ityp __export gasum(register uint64_t, register uint64_t);
+__MSNATIVE_ ityp __export asum(register ityp);
+__MSNATIVE_ ityp __export fsum(register ityp);
+__MSNATIVE_ ityp __export fasum(register ityp);
+__MSNATIVE_ ityp __export sfasum(register ityp);
+__MSNATIVE_ ityp __export fnnsum(register ityp);
+__MSNATIVE_ ityp __export summation(uint64_t dim, bool, ityp [static dim]);
+__MSNATIVE_ ityp __export productory(uint64_t dim, bool, ityp [static dim]);
+__MSNATIVE_ ityp __export math_media(uint64_t dim, ityp[static dim]);
+__MSNATIVE_ ityp __export math_variance(uint64_t dim, ityp [static dim]);
+__MSNATIVE_ ityp __export math_covariance(uint64_t dim, ityp [static dim], ityp [static dim]);
+__MSNATIVE_ ityp __export math_stddev(uint64_t dim, ityp [static dim]);
+__MSNATIVE_ bool __export math_outlier(uint64_t dim, uint64_t, ityp [static dim]);
+__MSNATIVE_ bool __export math_outlier2(uint64_t dim, uint64_t, float, ityp vector[static dim]);
+__MSNATIVE_ ityp __export math_geomedia(uint64_t dim, ityp[static dim]);
+__MSNATIVE_ ityp __export math_armedia(uint64_t dim, ityp [static dim]);
+__MSNATIVE_ ityp __export math_powmedia(uint64_t dim, uint64_t, ityp [static dim]);
+__MSNATIVE_ ityp __export math_scale(uint64_t dim, ityp [static dim]);
+__MSNATIVE_ ityp __export math_first_quartile(uint64_t dim, ityp [static dim]);
+__MSNATIVE_ ityp __export math_mediana(uint64_t dim, ityp [static dim]);
+__MSNATIVE_ ityp __export math_third_quartile(uint64_t dim, ityp [static dim]);
+__MSUTIL_ int64_t __system __export changeBase(register int, sel_typ, sel_typ);
+__MSUTIL_ uint64_t __export math_MCD(register uint64_t, register uint64_t);
+__MSUTIL_ uint64_t __export math_mcm(register uint64_t, register uint64_t);
+__MSNATIVE_ ityp __export exp10(register ityp);
+__MSNATIVE_ ityp __export expc(register ityp);
+__MSNATIVE_ ityp __export exp10c(register ityp);
+__MSNATIVE_ ityp __export exp2c(register ityp);
+__MSUTIL_ ityp __export logbN(register ityp, register ityp);
+__MSNATIVE_ ityp __export logc(register ityp);
+__MSNATIVE_ ityp __export log10c(register ityp);
+__MSNATIVE_ ityp __export log2c(register ityp);
+__MSNATIVE_ ityp __export log1pc(register ityp);
+__MSNATIVE_ ityp __export log101p(register ityp);
+__MSNATIVE_ ityp __export log101pc(register ityp);
+__MSNATIVE_ ityp __export log21p(register ityp);
+__MSNATIVE_ ityp __export log21pc(register ityp);
+__MSUTIL_ ityp __export rootnX(register ityp, register ityp);
+__MSNATIVE_ double complex __export cexpc(register double complex);
+__MSNATIVE_ double complex __export cexp10(register double complex);
+__MSNATIVE_ double complex __export cexp10c(register double complex);
+__MSNATIVE_ double complex __export cexp2(register double complex);
+__MSNATIVE_ double complex __export cexp2c(register double complex);
+__MSUTIL_ double complex __export clogbN(register double complex, register double complex);
+__MSNATIVE_ double complex __export clogc(register double complex);
+__MSNATIVE_ double complex __export clog10(register double complex);
+__MSNATIVE_ double complex __export clog10c(register double complex);
+__MSNATIVE_ double complex __export clog2(register double complex);
+__MSNATIVE_ double complex __export clog2c(register double complex);
+__MSNATIVE_ double complex __export clog1p(register double complex);
+__MSNATIVE_ double complex __export clog1pc(register double complex);
+__MSNATIVE_ double complex __export clog101p(register double complex);
+__MSNATIVE_ double complex __export clog101pc(register double complex);
+__MSNATIVE_ double complex __export clog21p(register double complex);
+__MSNATIVE_ double complex __export clog21pc(register double complex);
+__MSUTIL_ double complex __export ccbrt(register double complex);
+__MSUTIL_ double complex __export crootnX(register double complex, register double complex);
+
+__MSNATIVE_ ityp __export deg(register ityp);
+__MSNATIVE_ ityp __export rad(register ityp);
+__MSNATIVE_ ityp __export csc(register ityp);
+__MSNATIVE_ ityp __export sec(register ityp);
+__MSNATIVE_ ityp __export cot(register ityp);
+__MSNATIVE_ ityp __export csch(register ityp);
+__MSNATIVE_ ityp __export sech(register ityp);
+__MSNATIVE_ ityp __export coth(register ityp);
+__MSNATIVE_ ityp __export acsc(register ityp);
+__MSNATIVE_ ityp __export asec(register ityp);
+__MSNATIVE_ ityp __export acot(register ityp);
+__MSNATIVE_ ityp __export acsch(register ityp);
+__MSNATIVE_ ityp __export asech(register ityp);
+__MSNATIVE_ ityp __export acoth(register ityp);
+__MSNATIVE_ ityp __export hsin(register ityp);
+__MSNATIVE_ ityp __export hsinh(register ityp);
+__MSNATIVE_ ityp __export qsin(register ityp);
+__MSNATIVE_ ityp __export qsinh(register ityp);
+__MSNATIVE_ ityp __export hcos(register ityp);
+__MSNATIVE_ ityp __export hcosh(register ityp);
+__MSNATIVE_ ityp __export qcos(register ityp);
+__MSNATIVE_ ityp __export qcosh(register ityp);
+__MSNATIVE_ ityp __export hcsc(register ityp);
+__MSNATIVE_ ityp __export hcsch(register ityp);
+__MSNATIVE_ ityp __export qcsc(register ityp);
+__MSNATIVE_ ityp __export qcsch(register ityp);
+__MSNATIVE_ ityp __export hsec(register ityp);
+__MSNATIVE_ ityp __export hsech(register ityp);
+__MSNATIVE_ ityp __export qsec(register ityp);
+__MSNATIVE_ ityp __export qsech(register ityp);
+__MSNATIVE_ ityp __export htan(register ityp);
+__MSNATIVE_ ityp __export htanh(register ityp);
+__MSNATIVE_ ityp __export qtan(register ityp);
+__MSNATIVE_ ityp __export qtanh(register ityp);
+__MSNATIVE_ ityp __export hcot(register ityp);
+__MSNATIVE_ ityp __export hcoth(register ityp);
+__MSNATIVE_ ityp __export qcot(register ityp);
+__MSNATIVE_ ityp __export qcoth(register ityp);
+__MSNATIVE_ ityp __export vsin(register ityp);
+__MSNATIVE_ ityp __export cvsin(register ityp);
+__MSNATIVE_ ityp __export vcos(register ityp);
+__MSNATIVE_ ityp __export cvcos(register ityp);
+__MSNATIVE_ ityp __export hvsin(register ityp);
+__MSNATIVE_ ityp __export hcvsin(register ityp);
+__MSNATIVE_ ityp __export hvcos(register ityp);
+__MSNATIVE_ ityp __export hcvcos(register ityp);
+__MSNATIVE_ ityp __export qvsin(register ityp);
+__MSNATIVE_ ityp __export qcvsin(register ityp);
+__MSNATIVE_ ityp __export qvcos(register ityp);
+__MSNATIVE_ ityp __export qcvcos(register ityp);
+__MSNATIVE_ ityp __export vsinh(register ityp);
+__MSNATIVE_ ityp __export cvsinh(register ityp);
+__MSNATIVE_ ityp __export vcosh(register ityp);
+__MSNATIVE_ ityp __export cvcosh(register ityp);
+__MSNATIVE_ ityp __export hvsinh(register ityp);
+__MSNATIVE_ ityp __export hcvsinh(register ityp);
+__MSNATIVE_ ityp __export hvcosh(register ityp);
+__MSNATIVE_ ityp __export hcvcosh(register ityp);
+__MSNATIVE_ ityp __export qvsinh(register ityp);
+__MSNATIVE_ ityp __export qcvsinh(register ityp);
+__MSNATIVE_ ityp __export qvcosh(register ityp);
+__MSNATIVE_ ityp __export qcvcosh(register ityp);
+__MSNATIVE_ ityp __export esec(register ityp);
+__MSNATIVE_ ityp __export ecsc(register ityp);
+__MSNATIVE_ ityp __export esech(register ityp);
+__MSNATIVE_ ityp __export ecsch(register ityp);
+__MSNATIVE_ ityp __export hesec(register ityp);
+__MSNATIVE_ ityp __export hecsc(register ityp);
+__MSNATIVE_ ityp __export hesech(register ityp);
+__MSNATIVE_ ityp __export hecsch(register ityp);
+__MSNATIVE_ ityp __export qesec(register ityp);
+__MSNATIVE_ ityp __export qecsc(register ityp);
+__MSNATIVE_ ityp __export qesech(register ityp);
+__MSNATIVE_ ityp __export qecsch(register ityp);
+__MSNATIVE_ ityp __export sinc(register ityp);
+__MSNATIVE_ ityp __export sinch(register ityp);
+__MSNATIVE_ ityp __export hsinc(register ityp);
+__MSNATIVE_ ityp __export hsinch(register ityp);
+__MSNATIVE_ ityp __export qsinc(register ityp);
+__MSNATIVE_ ityp __export qsinch(register ityp);
+__MSNATIVE_ ityp __export cosc(register ityp);
+__MSNATIVE_ ityp __export cosch(register ityp);
+__MSNATIVE_ ityp __export hcosc(register ityp);
+__MSNATIVE_ ityp __export hcosch(register ityp);
+__MSNATIVE_ ityp __export qcosc(register ityp);
+__MSNATIVE_ ityp __export qcosch(register ityp);
+__MSNATIVE_ ityp __export secc(register ityp);
+__MSNATIVE_ ityp __export secch(register ityp);
+__MSNATIVE_ ityp __export hsecc(register ityp);
+__MSNATIVE_ ityp __export hsecch(register ityp);
+__MSNATIVE_ ityp __export qsecc(register ityp);
+__MSNATIVE_ ityp __export qsecch(register ityp);
+__MSNATIVE_ ityp __export cscc(register ityp);
+__MSNATIVE_ ityp __export cscch(register ityp);
+__MSNATIVE_ ityp __export hcscc(register ityp);
+__MSNATIVE_ ityp __export hcscch(register ityp);
+__MSNATIVE_ ityp __export qcscc(register ityp);
+__MSNATIVE_ ityp __export qcscch(register ityp);
+__MSNATIVE_ ityp __export tanc(register ityp);
+__MSNATIVE_ ityp __export tanch(register ityp);
+__MSNATIVE_ ityp __export htanc(register ityp);
+__MSNATIVE_ ityp __export htanch(register ityp);
+__MSNATIVE_ ityp __export qtanc(register ityp);
+__MSNATIVE_ ityp __export qtanch(register ityp);
+__MSNATIVE_ ityp __export cotc(register ityp);
+__MSNATIVE_ ityp __export cotch(register ityp);
+__MSNATIVE_ ityp __export hcotc(register ityp);
+__MSNATIVE_ ityp __export hcotch(register ityp);
+__MSNATIVE_ ityp __export qcotc(register ityp);
+__MSNATIVE_ ityp __export qcotch(register ityp);
+
+__MSNATIVE_ double complex __export ccsc(register double complex);
+__MSNATIVE_ double complex __export csec(register double complex);
+__MSNATIVE_ double complex __export ccot(register double complex);
+__MSNATIVE_ double complex __export ccsch(register double complex);
+__MSNATIVE_ double complex __export csech(register double complex);
+__MSNATIVE_ double complex __export ccoth(register double complex);
+__MSNATIVE_ double complex __export cacsc(register double complex);
+__MSNATIVE_ double complex __export casec(register double complex);
+__MSNATIVE_ double complex __export cacot(register double complex);
+__MSNATIVE_ double complex __export cacsch(register double complex);
+__MSNATIVE_ double complex __export casech(register double complex);
+__MSNATIVE_ double complex __export cacoth(register double complex);
+__MSNATIVE_ double complex __export chsin(register double complex);
+__MSNATIVE_ double complex __export chsinh(register double complex);
+__MSNATIVE_ double complex __export cqsin(register double complex);
+__MSNATIVE_ double complex __export cqsinh(register double complex);
+__MSNATIVE_ double complex __export chcos(register double complex);
+__MSNATIVE_ double complex __export chcosh(register double complex);
+__MSNATIVE_ double complex __export cqcos(register double complex);
+__MSNATIVE_ double complex __export cqcosh(register double complex);
+__MSNATIVE_ double complex __export chcsc(register double complex);
+__MSNATIVE_ double complex __export chcsch(register double complex);
+__MSNATIVE_ double complex __export cqcsc(register double complex);
+__MSNATIVE_ double complex __export cqcsch(register double complex);
+__MSNATIVE_ double complex __export chsec(register double complex);
+__MSNATIVE_ double complex __export chsech(register double complex);
+__MSNATIVE_ double complex __export cqsec(register double complex);
+__MSNATIVE_ double complex __export cqsech(register double complex);
+__MSNATIVE_ double complex __export chtan(register double complex);
+__MSNATIVE_ double complex __export chtanh(register double complex);
+__MSNATIVE_ double complex __export cqtan(register double complex);
+__MSNATIVE_ double complex __export cqtanh(register double complex);
+__MSNATIVE_ double complex __export chcot(register double complex);
+__MSNATIVE_ double complex __export chcoth(register double complex);
+__MSNATIVE_ double complex __export cqcot(register double complex);
+__MSNATIVE_ double complex __export cqcoth(register double complex);
+__MSNATIVE_ double complex __export cpxvsin(register double complex);
+__MSNATIVE_ double complex __export ccvsin(register double complex);
+__MSNATIVE_ double complex __export cpxvcos(register double complex);
+__MSNATIVE_ double complex __export ccvcos(register double complex);
+__MSNATIVE_ double complex __export chvsin(register double complex);
+__MSNATIVE_ double complex __export chcvsin(register double complex);
+__MSNATIVE_ double complex __export chvcos(register double complex);
+__MSNATIVE_ double complex __export chcvcos(register double complex);
+__MSNATIVE_ double complex __export cqvsin(register double complex);
+__MSNATIVE_ double complex __export cqcvsin(register double complex);
+__MSNATIVE_ double complex __export cqvcos(register double complex);
+__MSNATIVE_ double complex __export cqcvcos(register double complex);
+__MSNATIVE_ double complex __export cpxvsinh(register double complex);
+__MSNATIVE_ double complex __export ccvsinh(register double complex);
+__MSNATIVE_ double complex __export cpxvcosh(register double complex);
+__MSNATIVE_ double complex __export ccvcosh(register double complex);
+__MSNATIVE_ double complex __export chvsinh(register double complex);
+__MSNATIVE_ double complex __export chcvsinh(register double complex);
+__MSNATIVE_ double complex __export chvcosh(register double complex);
+__MSNATIVE_ double complex __export chcvcosh(register double complex);
+__MSNATIVE_ double complex __export cqvsinh(register double complex);
+__MSNATIVE_ double complex __export cqcvsinh(register double complex);
+__MSNATIVE_ double complex __export cqvcosh(register double complex);
+__MSNATIVE_ double complex __export cqcvcosh(register double complex);
+__MSNATIVE_ double complex __export cesec(register double complex);
+__MSNATIVE_ double complex __export cecsc(register double complex);
+__MSNATIVE_ double complex __export cesech(register double complex);
+__MSNATIVE_ double complex __export cecsch(register double complex);
+__MSNATIVE_ double complex __export chesec(register double complex);
+__MSNATIVE_ double complex __export checsc(register double complex);
+__MSNATIVE_ double complex __export chesech(register double complex);
+__MSNATIVE_ double complex __export checsch(register double complex);
+__MSNATIVE_ double complex __export cqesec(register double complex);
+__MSNATIVE_ double complex __export cqecsc(register double complex);
+__MSNATIVE_ double complex __export cqesech(register double complex);
+__MSNATIVE_ double complex __export cqecsch(register double complex);
+__MSNATIVE_ double complex __export csinc(register double complex);
+__MSNATIVE_ double complex __export csinch(register double complex);
+__MSNATIVE_ double complex __export chsinc(register double complex);
+__MSNATIVE_ double complex __export chsinch(register double complex);
+__MSNATIVE_ double complex __export cqsinc(register double complex);
+__MSNATIVE_ double complex __export cqsinch(register double complex);
+__MSNATIVE_ double complex __export ccosc(register double complex);
+__MSNATIVE_ double complex __export ccosch(register double complex);
+__MSNATIVE_ double complex __export chcosc(register double complex);
+__MSNATIVE_ double complex __export chcosch(register double complex);
+__MSNATIVE_ double complex __export cqcosc(register double complex);
+__MSNATIVE_ double complex __export cqcosch(register double complex);
+__MSNATIVE_ double complex __export csecc(register double complex);
+__MSNATIVE_ double complex __export csecch(register double complex);
+__MSNATIVE_ double complex __export chsecc(register double complex);
+__MSNATIVE_ double complex __export chsecch(register double complex);
+__MSNATIVE_ double complex __export cqsecc(register double complex);
+__MSNATIVE_ double complex __export cqsecch(register double complex);
+__MSNATIVE_ double complex __export ccscc(register double complex);
+__MSNATIVE_ double complex __export ccscch(register double complex);
+__MSNATIVE_ double complex __export chcscc(register double complex);
+__MSNATIVE_ double complex __export chcscch(register double complex);
+__MSNATIVE_ double complex __export cqcscc(register double complex);
+__MSNATIVE_ double complex __export cqcscch(register double complex);
+__MSNATIVE_ double complex __export ctanc(register double complex);
+__MSNATIVE_ double complex __export ctanch(register double complex);
+__MSNATIVE_ double complex __export chtanc(register double complex);
+__MSNATIVE_ double complex __export chtanch(register double complex);
+__MSNATIVE_ double complex __export cqtanc(register double complex);
+__MSNATIVE_ double complex __export cqtanch(register double complex);
+__MSNATIVE_ double complex __export ccotc(register double complex);
+__MSNATIVE_ double complex __export ccotch(register double complex);
+__MSNATIVE_ double complex __export chcotc(register double complex);
+__MSNATIVE_ double complex __export chcotch(register double complex);
+__MSNATIVE_ double complex __export cqcotc(register double complex);
+__MSNATIVE_ double complex __export cqcotch(register double complex);
+
+__MSNATIVE_ bool __system __export isEqualMatrix(ityp *, ityp *, const register dim_typ [static MAX_DIMENSIONS]);
+__MSNATIVE_ __MSUTIL_ ityp __system __export norms(ityp *, dim_typ);
+__MSNATIVE_ __MSUTIL_ ityp __system __export norm(ityp *, dim_typ, bool);
+__MSNATIVE_ __MSUTIL_ void __export newtonDifferenceTable(dim_typ, ityp [MAX_NEWTON_DIFFTABLES_DIM][MAX_NEWTON_DIFFTABLES_DIM], bool);
+__MSNATIVE_ sel_typ _MS__private __system __export _simplexMethod(ityp **, ityp **, const register dim_typ dim [static MAX_DIMENSIONS], ityp *, bool);
+__MSNATIVE_ __MSUTIL_ sel_typ _MS__private __system __export _matrixEigenValues(ityp *restrict, ityp *restrict, ityp *restrict, const register dim_typ);
+__MSNATIVE_ void _MS__private __system __export _matrixAdd(ityp **, ityp **, ityp **, const register dim_typ [static MAX_DIMENSIONS]);
+__MSNATIVE_ void _MS__private __system __export _matrixCAdd(ityp **, ityp **, ityp **, const register dim_typ [static MAX_DIMENSIONS]);
+__MSNATIVE_ void _MS__private __system __export _matrixQAdd(ityp **, ityp **, ityp **, const register dim_typ [static MAX_DIMENSIONS]);
+__MSNATIVE_ void _MS__private __system __export _matrixOAdd(ityp **, ityp **, ityp **, const register dim_typ [static MAX_DIMENSIONS]);
+__MSNATIVE_ void _MS__private __system __export _matrixSAdd(ityp **, ityp **, ityp **, const register dim_typ [static MAX_DIMENSIONS]);
+__MSNATIVE_ void _MS__private __system __export _matrixSub(ityp **, ityp **, ityp **, const register dim_typ [static MAX_DIMENSIONS]);
+__MSNATIVE_ void _MS__private __system __export _matrixCSub(ityp **, ityp **, ityp **, const register dim_typ [static MAX_DIMENSIONS]);
+__MSNATIVE_ void _MS__private __system __export _matrixQSub(ityp **, ityp **, ityp **, const register dim_typ [static MAX_DIMENSIONS]);
+__MSNATIVE_ void _MS__private __system __export _matrixOSub(ityp **, ityp **, ityp **, const register dim_typ [static MAX_DIMENSIONS]);
+__MSNATIVE_ void _MS__private __system __export _matrixSSub(ityp **, ityp **, ityp **, const register dim_typ [static MAX_DIMENSIONS]);
+
+__MSNATIVE_ __MSUTIL_ void __system __export mmult_fast(const register dim_typ, const register sel_typ, ityp **, ityp **, ityp **,
+	void (* const )(ityp **, ityp **, ityp **, const register dim_typ [static MAX_MATRICES]), 
+	void (* const )(ityp **, ityp **, ityp **, const register dim_typ [static MAX_DIMENSIONS]),
+	void (* const )(ityp **, ityp **, ityp **, const register dim_typ [static MAX_DIMENSIONS]));
+
+__MSNATIVE_ void __system __call_OSMM(ityp **, ityp **, ityp **, const register dim_typ [static MAX_MATRICES], const register sel_typ,
+	void (* const )(ityp **, ityp **, ityp **, const register dim_typ [static MAX_MATRICES]),
+	void (* const )(ityp **, ityp **, ityp **, const register dim_typ [static MAX_DIMENSIONS]),
+	void (* const )(ityp **, ityp **, ityp **, const register dim_typ [static MAX_DIMENSIONS]));
+
+__MSNATIVE_ void __system __call_STRASSENMM(ityp **, ityp **, ityp **, const register dim_typ [static MAX_MATRICES], const register sel_typ,
+	void (* const )(ityp **, ityp **, ityp **, const register dim_typ [static MAX_MATRICES]),
+	void (* const )(ityp **, ityp **, ityp **, const register dim_typ [static MAX_DIMENSIONS]),
+	void (* const )(ityp **, ityp **, ityp **, const register dim_typ [static MAX_DIMENSIONS]));
+
+__MSNATIVE_ void __system __call_NORMALMM(ityp **, ityp **, ityp **, const register dim_typ [static MAX_MATRICES], const register sel_typ,
+	void (* const prodFunc)(ityp **, ityp **, ityp **, const register dim_typ [static MAX_MATRICES]),
+	void (* const sumFunc)(ityp **, ityp **, ityp **, const register dim_typ [static MAX_DIMENSIONS]),
+	void (* const subFunc)(ityp **, ityp **, ityp **, const register dim_typ [static MAX_DIMENSIONS]));
+
+__MSNATIVE_ __MSUTIL_ void __system __export squareOSMM(void (*)(ityp **, ityp **, ityp **, const register dim_typ [static MAX_MATRICES]), ityp **, ityp **, ityp **, const register dim_typ);
+__MSNATIVE_ void _MS__private __system __export _matrixMultiplication(ityp **, ityp **, ityp **, const register dim_typ [static MAX_MATRICES]);
+__MSNATIVE_ void _MS__private __system __export _matrixCMultiplication(ityp **, ityp **, ityp **, const register dim_typ [static MAX_MATRICES]);
+__MSNATIVE_ void _MS__private __system __export _matrixQMultiplication(ityp **, ityp **, ityp **, const register dim_typ [static MAX_MATRICES]);
+__MSNATIVE_ void _MS__private __system __export _matrixOMultiplication(ityp **, ityp **, ityp **, const register dim_typ [static MAX_MATRICES]);
+__MSNATIVE_ void _MS__private __system __export _matrixSMultiplication(ityp **, ityp **, ityp **, const register dim_typ [static MAX_MATRICES]);
+__MSNATIVE_ void _MS__private __system __export _matrixKProduct(ityp **, ityp **, ityp **, register dim_typ [static MAX_DIMENSIONS][MAX_DIMENSIONS]);
+__MSNATIVE_ void _MS__private __system __export _matrixKCProduct(ityp **, ityp **, ityp **, register dim_typ [static MAX_DIMENSIONS][MAX_DIMENSIONS]);
+__MSNATIVE_ void _MS__private __system __export _matrixKQProduct(ityp **, ityp **, ityp **, register dim_typ [static MAX_DIMENSIONS][MAX_DIMENSIONS]);
+__MSNATIVE_ void _MS__private __system __export _matrixKOProduct(ityp **, ityp **, ityp **, register dim_typ [static MAX_DIMENSIONS][MAX_DIMENSIONS]);
+__MSNATIVE_ void _MS__private __system __export _matrixKSProduct(ityp **, ityp **, ityp **, register dim_typ [static MAX_DIMENSIONS][MAX_DIMENSIONS]);
+
+#ifdef __cplusplus
+}
+#endif // __cplusplus
