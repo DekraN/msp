@@ -1322,6 +1322,7 @@ __MSNATIVE_ ityp __export fnnsum(register ityp);
 __MSNATIVE_ ityp __export summation(uint64_t dim, bool, ityp [static dim]);
 __MSNATIVE_ ityp __export productory(uint64_t dim, bool, ityp [static dim]);
 __MSNATIVE_ ityp __export math_media(uint64_t dim, ityp[static dim]);
+__MSNATIVE_ ityp __export math_mode(uint64_t dim, ityp vector[static dim]);
 __MSNATIVE_ ityp __export math_variance(uint64_t dim, ityp [static dim]);
 __MSNATIVE_ ityp __export math_covariance(uint64_t dim, ityp [static dim], ityp [static dim]);
 __MSNATIVE_ ityp __export math_stddev(uint64_t dim, ityp [static dim]);

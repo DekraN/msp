@@ -8363,6 +8363,31 @@ case EXPR_NODEFUNC_MEDIA:
     break;
     }
     
+/* mode */
+case EXPR_NODEFUNC_MODE:
+    {
+    err = exprEvalNode(obj, nodes->data.function.nodes, 0, &d1);
+
+    if(!err)
+        {
+        ityp args[nodes->data.function.nodecount];
+        args[0] = d1;
+        for(pos = 0; ++pos < nodes->data.function.nodecount; )
+            {
+            err = exprEvalNode(obj, nodes->data.function.nodes, pos, &d2);
+            if(!err)
+                args[pos] = d2;
+            else
+                return err;
+            }
+        *val = math_mode(nodes->data.function.nodecount, args);
+        }
+    else
+        return err;
+
+    break;
+    }
+    
 /* var */
 case EXPR_NODEFUNC_VARIANCE:
     {
