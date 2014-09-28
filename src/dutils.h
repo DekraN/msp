@@ -57,9 +57,9 @@ extern "C" {
 #define _MS__private
 
 #define PROG__NAME "msp"
-#define PROG__VERSION "1.00"
+#define PROG__VERSION "1.10"
 #define PROG__AUTHOR "Marco Chiarelli"
-#define PROG__LASTUPDATEDATE "17/09/2014"
+#define PROG__LASTUPDATEDATE "25/09/2014"
 
 
 // INITIALIZING EXPREVAL DEFAULT CONSTANTS
@@ -94,13 +94,13 @@ extern "C" {
 	#include <errors.h>
 	#include <conio.h>
     #define MAX_PATH_LENGTH MAX_PATH
-    #define pulisciSchermo system("cls")
+    #define pulisciSchermo (void)system("cls")
 #else
     #include <termios.h>
     #include <unistd.h>
     #define MAX_PATH_LENGTH 260
     #define DEFAULT_LINUX_SPOOLFOLDER "/var/spool"
-    #define pulisciSchermo system("clear")
+    #define pulisciSchermo (void)system("clear")
 #endif
 
 enum

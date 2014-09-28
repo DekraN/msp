@@ -233,7 +233,7 @@ __MSSHELL_WRAPPER_ static void _MS__private __system progInfo(const sel_typ argc
 		printf2("ExprEval or MSCenv mathematical set of functions, see basic_calculator.txt\n");
 		printf2("or visit the project page at: https://sourceforge.net/projects/msp/\n");
 		printf2("NOTE: If you're using this program, then you probably should have downloaded it\n");
-		printf2("from the official site or in bundle with mathSuite v6.70 version\n");
+		printf2("from the official site or in bundle with mathSuite v6.80 version\n");
 		printf2("If not, then you are supposed to contact me ASAP.");
 		printf2(EXIT_MESSAGE);
     }
@@ -388,7 +388,7 @@ int main(int argc, char **argv)
 
     prepareToExit();
     #ifdef WINOS
-    	system("PAUSE"); // if working on Windows Environment...
+    	(void) system("PAUSE"); // if working on Windows Environment...
 	#endif
 
     return NOERROR_EXIT;

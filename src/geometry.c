@@ -165,7 +165,7 @@ __MSNATIVE_ bool __system printFile(const char path[static MAX_PATH_LENGTH])
         sprintf(str, "lpr -#1 -h -sP "DEFAULT_LINUX_SPOOLFOLDER" %s", path);
     #endif
 
-    system(str);
+    (void) system(str);
 
     return true;
 }
@@ -1242,7 +1242,7 @@ __MSUTIL_ inline bool __system __export checkErrMem(const void * pntr)
         printErr(12, "An error occurred during Heap Dynamic Memory Allocation");
         printf2("\n(Sub)Program Terminating...\n\n");
         #ifdef WINOS
-            system("PAUSE");
+            (void) system("PAUSE");
         #endif
         return true;
     }
@@ -1407,7 +1407,7 @@ __MSNATIVE_ ityp __system __export requires(const char *cmd_string, const char *
     {
         printf2(string);
         PRINT2N();
-        gets(buf);
+        (void) gets(buf);
     }
 
     access(exitHandle) = INVALID_EXITHANDLE;
