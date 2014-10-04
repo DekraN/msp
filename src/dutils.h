@@ -57,9 +57,9 @@ extern "C" {
 #define _MS__private
 
 #define PROG__NAME "msp"
-#define PROG__VERSION "1.10"
+#define PROG__VERSION "1.20"
 #define PROG__AUTHOR "Marco Chiarelli"
-#define PROG__LASTUPDATEDATE "25/09/2014"
+#define PROG__LASTUPDATEDATE "04/10/2014"
 
 
 // INITIALIZING EXPREVAL DEFAULT CONSTANTS
