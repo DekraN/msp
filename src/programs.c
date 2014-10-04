@@ -17,27 +17,13 @@ __MSSHELL_WRAPPER_ void basicCalculator(const sel_typ argc, char ** argv)
 
 __MSSHELL_WRAPPER_ void __apnt calcolatoreAvanzato(const sel_typ argc, char ** argv)
 {
-    operationsGroupMenu(MAX_ADVCALC_PROGS, adv_calc,
-                        main_menu[MAIN_ADVANCEDCALCULATOR].name,
-                        #if MAX_ADVCALC_PROGS > MAX_CASEINSENSITIVE_CHARS_ALPHABET
-                            BY_NUMBERS
-                        #else
-                            BY_CHARS
-                        #endif // MAX_SETTINGS
-                        );
+    operationsGroupMenu(MAX_ADVCALC_PROGS, adv_calc, main_menu[MAIN_ADVANCEDCALCULATOR].name, MAX_ADVCALC_PROGS+MAX_OMNIPRESENT_ELEMENTS<MAX_CASEINSENSITIVE_CHARS_ALPHABET);
     return ;
 }
 
 __MSSHELL_WRAPPER_ void __apnt mssManager(const sel_typ argc, char ** argv)
 {
-    operationsGroupMenu(MAX_MSSMANAGER_PROGS, mss_manager,
-                        main_menu[MAIN_MSSMANAGER].name,
-                        #if MAX_MSSMANAGER_PROGS > MAX_CASEINSENSITIVE_CHARS_ALPHABET
-                            BY_NUMBERS
-                        #else
-                            BY_CHARS
-                        #endif // MAX_SETTINGS
-                        );
+    operationsGroupMenu(MAX_MSSMANAGER_PROGS, mss_manager, main_menu[MAIN_MSSMANAGER].name, MAX_MSSMANAGER_PROGS+MAX_OMNIPRESENT_ELEMENTS<MAX_CASEINSENSITIVE_CHARS_ALPHABET);
     return ;
 }
 
@@ -152,13 +138,6 @@ __MSSHELL_WRAPPER_ __MSNATIVE_ void _MS__private __system __export operationsGro
 //
 __MSSHELL_WRAPPER_ void __apnt algebraOperations(const sel_typ argc, char ** argv)
 {
-    operationsGroupMenu(MAX_ALGEBRA_OPERATIONS,
-                        alg_operations, main_menu[MAIN_ALGEBRAOPERATIONS].name,
-                        #if MAX_ALGEBRA_OPERATIONS > MAX_CASEINSENSITIVE_CHARS_ALPHABET
-                            BY_NUMBERS
-                        #else
-                            BY_CHARS
-                        #endif // MAX_ALGEBRA_OPERATIONS
-                        );
+    operationsGroupMenu(MAX_ALGEBRA_OPERATIONS, alg_operations, main_menu[MAIN_ALGEBRAOPERATIONS].name, MAX_ALGEBRA_OPERATIONS+MAX_OMNIPRESENT_ELEMENTS<MAX_CASEINSENSITIVE_CHARS_ALPHABET);
     return;
 }

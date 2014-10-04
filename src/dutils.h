@@ -76,6 +76,8 @@ extern "C" {
 #define NOERROR_EXIT 0
 
 #define MAX_CASEINSENSITIVE_CHARS_ALPHABET 26
+#define _MAX_OMNIPRESENT_ELEMENTS 3
+#define MAX_OMNIPRESENT_ELEMENTS _MAX_OMNIPRESENT_ELEMENTS-1
 
 
 /// MINMAX powerful macros
@@ -588,6 +590,8 @@ enum
     ALGOPS_RANKCALCULATOR,
     ALGOPS_MATRIXSVD,
     ALGOPS_INVERSEMATRIX,
+    ALGOPS_MATRIXCOFACTOR,
+    ALGOPS_MATRIXADJOINT,
     ALGOPS_MATRIXTRANSPOSE,
     ALGOPS_MATRIXADD,
     ALGOPS_TENSORSSUM,
@@ -1202,6 +1206,8 @@ __MSSHELL_WRAPPER_ __MSNATIVE_ bool randomMatrix(ityp *restrict, const register 
 __MSNATIVE_ void transpose(ityp *restrict, ityp *restrict, const register dim_typ [static MAX_DIMENSIONS]);
 __MSUTIL_ bool __export FattLU(dim_typ, ityp *restrict, ityp *restrict, ityp *);
 __MSUTIL_ bool __export invertMatrix(ityp *restrict, dim_typ);
+__MSUTIL_ bool __export CoFactor(ityp *restrict, ityp *restrict, dim_typ);
+__MSUTIL_ bool _MS__private __export adjoint(ityp *restrict, ityp *restrict, dim_typ);
 __MSUTIL_ bool __export dsvd(ityp *restrict, const register dim_typ [static MAX_DIMENSIONS], ityp *restrict, ityp *restrict);
 __MSNATIVE_ dim_typ __export rank(ityp *restrict, const register dim_typ [static MAX_DIMENSIONS]);
 __MSNATIVE_ void __system printf2(const char *, ...);

@@ -456,6 +456,59 @@ __MSUTIL_ bool __export invertMatrix(ityp *restrict matrix, dim_typ n)
     return true;
 }
 
+/*
+   Find the cofactor matrix of a square matrix
+*/
+__MSUTIL_ bool __export CoFactor(ityp *restrict a, ityp *restrict b, dim_typ n)
+{
+	dim_typ i,j,ii,jj,i1,j1;
+	const register dim_typ nminus1 = n-1; 
+	ityp _det = 0.00;
+	ityp *c = NULL;
+	
+	if(!matrixAlloc(&c, (dim_typ2){nminus1,nminus1}))
+		return false;
+		
+	for (j=0; j<n; j++) 
+  		for (i=0; i<n; i++)
+  		{
+
+     		/* Form the adjoint a_ij */
+     		i1 = 0;
+   			for (ii=0; ii<n; ++ii)
+	 		{
+    			if(ii == i)
+           			continue;
+        		j1 = 0;
+        		for(jj=0; jj<n; ++jj)
+				{
+	           		if(jj == j)
+	              		continue;
+	           		*(c + nminus1*i1 + j1) = *(a + n*ii + jj);
+	           		++ j1;
+	        	}
+        		++ i1;
+     		}
+		     /* Calculate the determinant */
+		     _det = det(c, n-1, NULL);
+	     	/* Fill in the elements of the cofactor */
+	     	*(b + n*i + j) = pow(-1.0,i+j+2.0) * _det;
+  		}
+
+	matrixFree(&c);
+	return true;
+}
+
+__MSUTIL_ inline bool _MS__private __export adjoint(ityp *restrict a, ityp *restrict b, dim_typ n)
+{
+	if(CoFactor(a,b,n))
+	{
+		transpose(b,a,(dim_typ2){n,n});
+		return true;
+	}
+	return false;
+}
+
 __MSUTIL_ static inline _MS__private __export ityp PYTHAG(ityp a, ityp b)
 {
     const ityp at = fabs(a), bt = fabs(b);

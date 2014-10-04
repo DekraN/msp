@@ -15,6 +15,7 @@ __MSSHELL_WRAPPER_ static void _MS__private matrixTrace(const sel_typ argc, char
 __MSSHELL_WRAPPER_ static void _MS__private matrixRank(const sel_typ argc, char ** argv);
 __MSSHELL_WRAPPER_ static void _MS__private matrixSVD(const sel_typ argc, char ** argv);
 __MSSHELL_WRAPPER_ static void _MS__private matrixInv(const sel_typ argc, char ** argv);
+__MSSHELL_WRAPPER_ static void _MS__private matrixCoFactor(const sel_typ argc, char ** argv);
 __MSSHELL_WRAPPER_ static void _MS__private matrixTranspose(const sel_typ argc, char ** argv);
 __MSSHELL_WRAPPER_ static void _MS__private matrixAdd(const sel_typ argc, char ** argv);
 __MSSHELL_WRAPPER_ static void _MS__private matrixMultiplication(const sel_typ argc, char ** argv);
@@ -96,6 +97,24 @@ sprog alg_operations[MAX_ALGEBRA_OPERATIONS] =
         matrixInv,
         BY_USER,
         CHILD
+    },
+    [ALGOPS_MATRIXCOFACTOR] =
+    {
+    	"CoFactor Matrix",
+    	CMD_MATRIXCOFACTOR,
+    	USAGE_MATRIXCOFACTOR,
+    	matrixCoFactor,
+    	BY_USER,
+    	CHILD
+    },
+    [ALGOPS_MATRIXADJOINT] =
+    {
+    	"Adjoint Matrix",
+    	CMD_MATRIXADJOINT,
+    	USAGE_MATRIXADJOINT,
+    	matrixCoFactor,
+    	BY_USER,
+    	CHILD
     },
     [ALGOPS_MATRIXTRANSPOSE] =
     {
@@ -685,6 +704,69 @@ __MSSHELL_WRAPPER_ static void _MS__private matrixInv(const sel_typ argc, char *
     }
 
     matrixFree(&matrix);
+
+    return;
+}
+
+__MSSHELL_WRAPPER_ static void _MS__private matrixCoFactor(const sel_typ argc, char ** argv)
+{
+    ityp *matrix = NULL;
+    dim_typ dim[MAX_DIMENSIONS];
+
+    if(argc)
+    {
+        if((!matrixToken(argv[0], &matrix, dim, &dim[COLUMNS])) || dim[ROWS] != dim[COLUMNS])
+        {
+            matrixFree(&matrix);
+            printUsage(&alg_operations[ALGOPS_INVERSEMATRIX]);
+            return;
+        }
+    }
+    else if(!insertMatrix(matrix, dim[ROWS], dim[COLUMNS], true))
+        return;
+        
+    ityp *matrix2 = NULL;
+
+    if(!matrixAlloc(&matrix2, (dim_typ2){dim[ROWS], dim[ROWS]}))
+    {
+        #ifdef WINOS
+            SetExitButtonState(ENABLED);
+        #endif // WINOS
+        return;
+    }
+
+	struct timeval tvBegin;
+	static bool (* const cof_funcs[MAX_DIMENSIONS])(ityp *restrict, ityp *restrict, dim_typ) =
+	{
+		CoFactor,
+		adjoint
+	};
+	
+	const bool which_prog = __pmode__-ALGOPS_MATRIXCOFACTOR;
+	bool (* const cof_func)(ityp *restrict, ityp *restrict, dim_typ) = cof_funcs[which_prog];
+	
+	gettimeofday(&tvBegin, NULL);
+		
+	if(!cof_func(matrix, matrix2, dim[ROWS]))
+	{
+		printErr(12, "CoFactor Matrix Evaluating Process Heap Dynamic Memory Allocation Problem");
+		matrixFree(&matrix);
+		matrixFree(&matrix2);
+		return;
+	}
+
+    PRINTL();
+    printf("Average Time: %.*f;\n", SHOWTIME_PRECISION, getDiffTime(&tvBegin));
+	
+	printf("\%s MATRIX of Inserted Matrix is:\n\n", which_prog?"ADJOINT":"COFACTOR");
+    printMatrix(stdout, which_prog?matrix:matrix2, (dim_typ2){dim[ROWS], dim[ROWS]});
+
+    matrixFree(&matrix);
+    matrixFree(&matrix2);
+
+    #ifdef WINOS
+        SetExitButtonState(ENABLED);
+    #endif // WINOS
 
     return;
 }
