@@ -12,6 +12,8 @@ __MSSHELL_WRAPPER_ static void _MS__private secondGradeEquationSolver(const sel_
 __MSSHELL_WRAPPER_ static void _MS__private complexAdd(const sel_typ argc, char ** argv);
 __MSSHELL_WRAPPER_ static void _MS__private complexMul(const sel_typ argc, char ** argv);
 __MSSHELL_WRAPPER_ static void _MS__private getDate(const sel_typ argc, char ** argv);
+__MSSHELL_WRAPPER_ static void _MS__private routhTable(const sel_typ argc, char ** argv);
+__MSSHELL_WRAPPER_ static void _MS__private juryTable(const sel_typ argc, char ** argv);
 __MSSHELL_WRAPPER_ static void _MS__private simplexMethod(const sel_typ argc, char ** argv);
 __MSSHELL_WRAPPER_ static void _MS__private newtonDifferenceTables(const sel_typ argc, char ** argv);
 __MSSHELL_WRAPPER_ static void _MS__private lagrangeInterpolation(const sel_typ argc, char ** argv);
@@ -49,6 +51,24 @@ sprog adv_calc[MAX_ADVCALC_PROGS] =
         complexMul,
         BY_USER,
         CHILD
+    },
+    [ADVCALC_ROUTHTABLE] =
+    {
+    	"Routh Table",
+    	CMD_ROUTHTABLE,
+    	USAGE_ROUTHTABLE,
+    	routhTable,
+    	BY_USER,
+    	CHILD
+    },
+    [ADVCALC_JURYTABLE] =
+    {
+    	"Jury Table",
+    	CMD_JURYTABLE,
+    	USAGE_JURYTABLE,
+    	juryTable,
+    	BY_USER,
+    	CHILD
     },
     [ADVCALC_SIMPLEXMETHOD] =
     {
@@ -290,6 +310,98 @@ __MSSHELL_WRAPPER_ static void _MS__private complexMul(const sel_typ argc, char 
     return;
 }
 
+__MSSHELL_WRAPPER_ static void _MS__private routhTable(const sel_typ argc, char ** argv)
+{
+	ityp *table = NULL;
+	dim_typ dim[MAX_DIMENSIONS];
+	
+	if(argc)
+    {
+        if((!matrixToken(argv[0], &table, dim, &dim[COLUMNS])) || dim[COLUMNS] <= 2)
+        {
+            matrixFree(&table);
+            printUsage(&adv_calc[ADVCALC_ROUTHTABLE]);
+            return;
+        }
+    }
+    else
+    {
+        printf2("\nEnter the Polynom n>2 dimensioned Row-Matrix.\n\n");
+        if(!insertMatrix(table, dim[ROWS], dim[COLUMNS], false))
+            return;
+        if(dim[COLUMNS] <= 2)
+        {
+        	matrixFree(&table);
+            printUsage(&adv_calc[ADVCALC_ROUTHTABLE]);
+            return;
+        }
+    }
+    
+    short permanences;
+    fsel_typ nullrow = 0; // could not be null-row-ed the first row
+    
+    if((permanences = _routhTable(&table, dim[COLUMNS], &nullrow)) == ROUTHTABLE_ALLOC_ERROR)
+    	printErr(12, "Routh Table Evaluator Dynamic Memory Allocation Problem");
+    else
+    {
+    	printf2("The ROUTH TABLE of the inserted Polynom Matrix is: \n");
+    	printMatrix(stdout, table, (dim_typ2){dim[COLUMNS], ((dim_typ)((dim[COLUMNS]*0.5) + 1))});
+    	printf2("PERMANENCES: %hu, VARIATIONS: %hu", permanences, dim[COLUMNS]-1-permanences);
+    	if(nullrow)
+    		printf2("\nIt has been used the AUXILIARY POLYNOM's Derivative on the %huth NULL ROW.\n\n", nullrow+1);
+    }
+    
+    matrixFree(&table);
+    
+    #ifdef WINOS
+        SetExitButtonState(ENABLED);
+    #endif // WINOS
+	return;
+}
+
+__MSSHELL_WRAPPER_ static void _MS__private juryTable(const sel_typ argc, char ** argv)
+{
+	ityp *table = NULL;
+	dim_typ dim[MAX_DIMENSIONS];
+	
+	if(argc)
+    {
+        if((!matrixToken(argv[0], &table, dim, &dim[COLUMNS])) || dim[COLUMNS] <= 2)
+        {
+            matrixFree(&table);
+            printUsage(&adv_calc[ADVCALC_JURYTABLE]);
+            return;
+        }
+    }
+    else
+    {
+        printf2("\nEnter the Polynom n>2 dimensioned Row-Matrix.\n\n");
+        if(!insertMatrix(table, dim[ROWS], dim[COLUMNS], false))
+            return;
+        if(dim[COLUMNS] <= 2)
+        {
+        	matrixFree(&table);
+            printUsage(&adv_calc[ADVCALC_JURYTABLE]);
+            return;
+        }
+    }
+    
+    if(!_juryTable(&table, dim[COLUMNS]))
+    	printErr(12, "Jury Table Evaluator Dynamic Memory Allocation Problem");
+    else
+    {
+    	printf2("\nThe JURY TABLE of the inserted Polynom Matrix is: \n");
+    	printMatrix(stdout, table, (dim_typ2){((dim[COLUMNS]-1)<<1)-3,dim[COLUMNS]});
+    }
+    
+    matrixFree(&table);
+    
+    #ifdef WINOS
+        SetExitButtonState(ENABLED);
+    #endif // WINOS
+	return;
+}
+
 __MSSHELL_WRAPPER_ static void _MS__private simplexMethod(const sel_typ argc, char ** argv)
 {
 
@@ -374,8 +486,6 @@ __MSSHELL_WRAPPER_ static void _MS__private simplexMethod(const sel_typ argc, ch
     }
 
     sel_typ exit_state;
-
-	struct timeval tvBegin;
 		
     if((exit_state = _simplexMethod(&tableau, &bfs, dim, constraint_types, mode)) == SIMPLEXMETHOD_INFBFS_ERROR)
         printErr(33, "This Problem has a Solution whose limit is Infinite");

@@ -57,9 +57,9 @@ extern "C" {
 #define _MS__private
 
 #define PROG__NAME "msp"
-#define PROG__VERSION "1.20"
+#define PROG__VERSION "1.30"
 #define PROG__AUTHOR "Marco Chiarelli"
-#define PROG__LASTUPDATEDATE "04/10/2014"
+#define PROG__LASTUPDATEDATE "15/11/2014"
 
 
 // INITIALIZING EXPREVAL DEFAULT CONSTANTS
@@ -219,6 +219,13 @@ enum
 
 #define MATRIXES_SEPERATOR_STRING BLANK_STRING
 #define MATRIXES_SEPERATOR_CHAR BLANK_CHAR
+
+// Routh Criterion METHOD MACROS
+
+#define ROUTHTABLE_EPSILON 0.0000000001
+#define ROUTHTABLE_ALLOC_ERROR -1
+
+#define JURYTABLE_ALLOC_ERROR false
 
 // Simplex METHOD MACROS
 
@@ -515,10 +522,10 @@ enum
 // DEFINIZIONE MACRO SOTTO-PROGRAMMI
 //
 
-// Valore di inizializzazione del metadato modalit√†
-// della variabile strutturata suite, definita pi√π sotto
+// Valore di inizializzazione del metadato modalit‡
+// della variabile strutturata suite, definita pi˘ sotto
 #define PROGRAM_BUSY -1
-// o pi√π semplicemente indica che l'utente √® in fase di scelta del subprogram.
+// o pi˘ semplicemente indica che l'utente Ë in fase di scelta del subprogram.
 
 
 // Enumerazione ID Sotto-Programmi
@@ -566,6 +573,8 @@ enum
     ADVCALC_SECONDGRADEEQUATIONSOLVER = 0,
     ADVCALC_COMPLEXNUMBERSSUM,
     ADVCALC_COMPLEXNUMBERSPROD,
+    ADVCALC_ROUTHTABLE,
+    ADVCALC_JURYTABLE,
     ADVCALC_SIMPLEXMETHOD,
     ADVCALC_NEWTONDIFFTABLES,
     ADVCALC_LAGRANGEINTERPOLATION,
@@ -801,9 +810,6 @@ enum
 
 #define MAX_MINBASE_CONVERTIBLE_NUM 262000
 
-// #define MAX_TYPES 14
-// #define DOMAIN_NULL MAX_TYPES+1
-
 #define LOWER_TRIANGULAR 0
 #define UPPER_TRIANGULAR 1
 
@@ -836,7 +842,7 @@ enum
 
 
 /*
-Dedicati alla modalit√† di funzionamento
+Dedicati alla modalit‡ di funzionamento
 della funzione matrixToVector, per decidere
 in che senso deve essere svolta
 0 -> Normale, 1 -> Viceversa
@@ -846,7 +852,7 @@ in che senso deve essere svolta
 #define VECTOR_TO_MATRIX true
 
 /*
-Dedicati alla modalit√† di stampa della matrice
+Dedicati alla modalit‡ di stampa della matrice
 dell'omonima funzione. Come suggeriscono le
 stesse macro, passando 0 si stampa una matrice
 di valori in virgola mobile, altrimenti di interi.
@@ -1601,6 +1607,8 @@ __MSNATIVE_ bool __system __export isEqualMatrix(ityp *, ityp *, const register 
 __MSNATIVE_ __MSUTIL_ ityp __system __export norms(ityp *, dim_typ);
 __MSNATIVE_ __MSUTIL_ ityp __system __export norm(ityp *, dim_typ, bool);
 __MSNATIVE_ __MSUTIL_ void __export newtonDifferenceTable(dim_typ, ityp [MAX_NEWTON_DIFFTABLES_DIM][MAX_NEWTON_DIFFTABLES_DIM], bool);
+__MSNATIVE_ short _MS__private __system __export _routhTable(ityp **, const register dim_typ, fsel_typ *);
+__MSNATIVE_ bool _MS__private __system __export _juryTable(ityp **, const register dim_typ);
 __MSNATIVE_ sel_typ _MS__private __system __export _simplexMethod(ityp **, ityp **, const register dim_typ dim [static MAX_DIMENSIONS], ityp *, bool);
 __MSNATIVE_ __MSUTIL_ sel_typ _MS__private __system __export _matrixEigenValues(ityp *restrict, ityp *restrict, ityp *restrict, const register dim_typ);
 __MSNATIVE_ void _MS__private __system __export _matrixAdd(ityp **, ityp **, ityp **, const register dim_typ [static MAX_DIMENSIONS]);
