@@ -2095,7 +2095,6 @@ __MSSHELL_WRAPPER_ static void _MS__private perScalarMultiplication(const sel_ty
         }
     }
 
-    printf2("Enter a double floating-point Scalar Number.\n");
     PRINTHOWTOBACKMESSAGE();
     PRINTN();
 
@@ -2112,7 +2111,7 @@ __MSSHELL_WRAPPER_ static void _MS__private perScalarMultiplication(const sel_ty
         }
     }
     else
-    	scal = requires(NULL, NULL_CHAR, "Inserted Scalar", PARSER_SHOWRESULT);
+    	scal = requires(NULL, "Enter a double floating-point Scalar Number.\n", "Inserted Scalar", PARSER_SHOWRESULT);
 
     if(isNullVal(scal))
     {
