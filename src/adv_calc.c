@@ -375,18 +375,48 @@ __MSSHELL_WRAPPER_ static void _MS__private polynomEval(const sel_typ argc, char
         return;
     }
     
-	const bool dermode = __pmode__ == ADVCALC_POLYNOMDEVALUATOR;
-	
-	ityp (* const ev_func)(ityp *restrict, const register dim_typ, const ityp) = dermode ? deval:eval;
-	const register ityp result = ev_func(table, dim[COLUMNS], scal);
-	
-	if(dermode)
+    dim_typ times = __pmode__ == ADVCALC_POLYNOMDEVALUATOR;
+    register ityp result;
+    char der_order[MINMIN_STRING] = NULL_CHAR;
+    
+    if(times)
 	{
+		ityp tmp = 0.00;
+		if(argc > MAX_DIMENSIONS)
+		{
+            if(!parse(argv[1], &tmp))
+            {
+            	matrixFree(&table);
+				#ifdef WINOS
+			    	SetExitButtonState(ENABLED);
+			    #endif
+                return;
+            }
+            times = tmp;
+	    }
+	    else if(isNullVal((tmp = requires(NULL, "Enter a non-zero positive integer representative of the Derivative Order.\n", "Inserted Derivative Order:", PARSER_NOSETTINGS))))
+        {
+            CLEARBUFFER();
+            if(!access(exitHandle))
+			{
+				#ifdef WINOS
+			    	SetExitButtonState(ENABLED);
+			    #endif	
+			    return;
+			}
+            printErr(33, "Invalid inserted Value.\nMust be a non-zero integer between 1 and %hu", dim[COLUMNS]);
+		}
+		
+		for(dim_typ i=0; i<times; ++i)
+			result = deval(table, dim[COLUMNS], scal);
 		printf2("The Derivative of the inserted POLYNOM is the POLYNOM: \n");
 		printMatrix(stdout, table, dim);
+		sprintf(der_order, "%hu-Derivative ", times);
 	}
+	else
+		result = eval(table, dim[COLUMNS], scal);
     
-	printf2("\nInserted POLYNOM %sEvaluated in: ", dermode ? "Derivative ":NULL_CHAR);
+	printf2("\nInserted POLYNOM %sEvaluated in: ", der_order);
 	printf2(OUTPUT_CONVERSION_FORMAT, scal);
 	printf2(" RESULT is: ");
 	printf2(OUTPUT_CONVERSION_FORMAT, result);
